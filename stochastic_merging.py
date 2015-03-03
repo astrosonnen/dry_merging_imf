@@ -8,6 +8,11 @@ def generate_ensemble(mh_min=1e10,mh_max=10.**13.5,alpha=2.): #draws halos from 
 
     return ensemble
 
+
+def merging_prob(mh,m_sat,z,dz): #defines the (infinitesimal) probability for a halo of mass mh to merge with a satellite of mass m_sat bewteen z and z+dz.
+    return 0.
+
+
 def evolve_ensemble(ensemble,zf=0.,zi=2.,dz=0.001): #evolves the ensemble by merging its halos at each timestep.
 
     zs = np.arange(zf,zi,dz)
