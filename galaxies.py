@@ -12,6 +12,8 @@ beta = -1.995
 gamma = 0.263
 etap = 0.0993
 
+betaR = 0.6
+
 apar = 1.11
 bpar = 1.10
 Mdot = 46.1/yr
@@ -26,25 +28,26 @@ def Izfunc(z,z_0):
 
 class etg:
 
-    def __init__(self,mstar_chab_0=1e11,mhalo_0=1e13,re_0=5.,sigma_0=200.,zform=None):
+    def __init__(self,mstar_chab_0=1e11,mhalo_0=1e13,re_0=5.,sigma_0=200.,zform=None,dtform=None):
         self.mstar_chab_0 = mstar_chab_0
         self.mhalo_0 = mhalo_0
         self.re_0 = re_0
         self.sigma_0 = sigma_0
         self.zform = zform
+	self.dtform = None
         self.imf_form = None
         self.z = None
         self.mhalo = None
         self.mstar_chab = None
         self.mstar_true = None
+	self.re = None
 
     def get_zform(self):
-        self.zform = imf_func.zform_func(np.log10(self.mstar_chab_0))
+        #self.zform = imf_func.zform_mstar_func(np.log10(self.mstar_chab_0))
+        self.zform = imf_func.zform_sigma_func(np.log10(self.sigma_0))
 
-    def get_imf_form(self):
-        if self.zform is None:
-            self.get_zform()
-        self.imf_form = 10.**imf_func.limf_func(self.zform)
+    def get_dtform(self):
+	self.dtform = imf_func.dtform_func(np.log10(self.sigma_0))
 
 
     def make_z_grid(self,dz=0.001,zup=None):
@@ -57,7 +60,7 @@ class etg:
             self.z = np.arange(0.,self.zform,dz)
 
 
-    def evolve_back(self,ximin=0.03,zup=None,dz=0.001):
+    def evolve_back(self,ximin=0.03,zup=None,dz=0.001,usesigma=True,coeff=(0.1,0.3)):
         if self.z == None:
             self.make_z_grid(dz,zup)
         else:
@@ -70,6 +73,8 @@ class etg:
 
         self.mstar_chab = 0.*self.mhalo + self.mstar_chab_0
         self.mstar_true = 0.*self.mhalo + self.mstar_chab_0
+
+	self.re = 0.*self.mhalo + self.re_0
 
         for i in range(1,Nz):
             lmhalo_grid = shmrs.mhfunc(lmstar_grid,self.z[i])
@@ -90,19 +95,26 @@ class etg:
 
                 dmdz = -A*IMz*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
 
-                IMtz = quad(lambda xi: 10.**imf_func.limf_func(imf_func.zform_func(np.log10(xi*self.mhalo[i]*rfunc(xi*self.mhalo[i]))))*rfunc(xi*self.mhalo[i])*xi**(beta+1.)*np.exp((xi/xitilde)**gamma),ximin_eff,1.)[0]
+                IMtz = quad(lambda xi: imf_func.satellite_imf(np.log10(xi*self.mhalo[i]*rfunc(xi*self.mhalo[i])),usesigma,coeff)*rfunc(xi*self.mhalo[i])*xi**(beta+1.)*np.exp((xi/xitilde)**gamma),ximin_eff,1.)[0]
 
                 dmtdz = -A*IMtz*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
+
+		Ire = quad(lambda xi: (2.-np.log(1.+xi**(2.-betaR))/np.log(1.+xi))*rfunc(xi*self.mhalo[i])*xi**(beta+1.)*np.exp((xi/xitilde)**gamma),ximin_eff,1.)[0]
+
+		dlnredz = -A*Ire*self.mhalo[i]/(self.mstar_chab[i-1] + dz*dmdz)*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
+
             else:
                 dmdz = 0.
                 dmtdz = 0.
+		dlnredz = 0.
 
             self.mstar_chab[i] = self.mstar_chab[i-1] + dz*dmdz
             self.mstar_true[i] = self.mstar_true[i-1] + dz*dmtdz
+	    self.re[i] = self.re[i-1]*(1. + dlnredz*dz)
 
 
         if zup is None:
-            self.get_imf_form()
+            self.imf_form = imf_func.central_imf(self,usesigma,coeff)
             self.mstar_true += self.mstar_chab[-1]*self.imf_form - self.mstar_true[-1]
 
 
