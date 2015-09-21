@@ -16,11 +16,11 @@ z_spline = splrep(logt_grid[1:],z_grid[1:])
 logt_spline = splrep(z_grid[1:],logt_grid[1:])
 rhoc_spline = splrep(z_grid[1:],rhoc_grid[1:])
 
-def zform_mstar_func(lmstar):
+def z_form_mstar_func(lmstar):
     return splev(0.427 + 0.053*lmstar,z_spline)
     #return 1.9856 + 0.8713*(lmstar -11.) + 0.3451*(lmstar - 11.)**2
 
-def zform_sigma_func(lsigma):
+def z_form_sigma_func(lsigma):
     return splev(0.46 + 0.238*lsigma,z_spline)
 
 def dtform_func(lsigma):
@@ -46,23 +46,25 @@ def limf_func_CvD12(mstar,re,dt,a=0.1,b=0.3):
     return a + b*(np.log10(SigmaSF(mstar,re,dt)) - 1.)
     
 
-def limf_func_rhoc(zform,a=0.3,b=1.):
-    #rhoc = cosmology.rhoc(zform_func(lmstar))
-    rhoc = splev(zform,rhoc_spline)
+def limf_func_rhoc(z_form,a=0.3,b=1.):
+    #rhoc = cosmology.rhoc(z_form_func(lmstar))
+    rhoc = splev(z_form,rhoc_spline)
     return a + b*(np.log10(rhoc) + 28.)
 
 
 
-def central_imf(galaxy,usesigma=True,coeff=(0.1,0.3)):
+def central_imf(galaxy, coeff=(0.1,0.3)):
 
-    if usesigma:
-	dtform = dtform_func(np.log10(galaxy.sigma_0))
-	return 10.**limf_func_CvD12(galaxy.mstar_chab[-1],galaxy.re[-1],dtform,coeff[0],coeff[1])
+    if galaxy.recipe == 'sigma':
+        dtform = dtform_func(np.log10(galaxy.sigma_0))
+        return 10.**limf_func_CvD12(galaxy.mstar_chab[-1],galaxy.re[-1],dtform,coeff[0],coeff[1])
+
+    elif galaxy.recipe == 'mstar':
+        z_form = z_form_mstar_func(np.log10(galaxy.mstar_chab_0))
+        return 10.**limf_func_rhoc(z_form,coeff[0],coeff[1])
 
     else:
-	zform = zform_mstar_func(np.log10(galaxy.mstar_chab_0))
-	return 10.**limf_func_rhoc(zform,coeff[0],coeff[1])
-
+        raise ValueError("recipe must be one between 'sigma' and 'mstar'.")
 
 
 def satellite_imf(lmstar,usesigma=True,coeff=(0.1,0.3)):
@@ -73,7 +75,7 @@ def satellite_imf(lmstar,usesigma=True,coeff=(0.1,0.3)):
 	return 10.**limf_func_CvD12(10.**lmstar,re,dtform,coeff[0],coeff[1])
 
     else:
-        zform = zform_mstar_func(lmstar)
-        return 10.**limf_func_rhoc(zform,coeff[0],coeff[1])
+        z_form = z_form_mstar_func(lmstar)
+        return 10.**limf_func_rhoc(z_form,coeff[0],coeff[1])
 
 
