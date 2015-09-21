@@ -1,5 +1,5 @@
 import numpy as np
-from sonnentools.cgsconstants import *
+from cgsconstants import *
 from scipy.interpolate import splrep,splev
 import shmrs
 import imf_func
@@ -34,13 +34,13 @@ class etg:
         self.re_0 = re_0
         self.sigma_0 = sigma_0
         self.zform = zform
-	self.dtform = None
+        self.dtform = None
         self.imf_form = None
         self.z = None
         self.mhalo = None
         self.mstar_chab = None
         self.mstar_true = None
-	self.re = None
+        self.re = None
 
     def get_zform(self):
         #self.zform = imf_func.zform_mstar_func(np.log10(self.mstar_chab_0))
@@ -74,7 +74,7 @@ class etg:
         self.mstar_chab = 0.*self.mhalo + self.mstar_chab_0
         self.mstar_true = 0.*self.mhalo + self.mstar_chab_0
 
-	self.re = 0.*self.mhalo + self.re_0
+        self.re = 0.*self.mhalo + self.re_0
 
         for i in range(1,Nz):
             lmhalo_grid = shmrs.mhfunc(lmstar_grid,self.z[i])
