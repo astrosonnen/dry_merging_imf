@@ -62,7 +62,7 @@ class ETG:
     def get_dtform(self):
         self.dtform = imf_func.dtform_func(np.log10(self.sigma_0))
 
-    def evolve(self, ximin=0.03, dz=0.001, zup=2., imf_recipe='sigma', recipe_coeff=(0.1, 0.3)):
+    def evolve(self, ximin=0.03, dz=0.001, zup=2., imf_recipe='SigmaSF', recipe_coeff=(0.1, 0.3)):
 
         self.z = np.arange(0., zup, dz)
 
@@ -134,7 +134,7 @@ class ETG:
             self.re[i] = self.re[i-1]*(1. - 0.5*(self.mstardlnre_dz[i]/self.mstar_chab[i] + \
                                                  self.mstardlnre_dz[i-1]/self.mstar_chab[i-1])*dz)
 
-        self.imf_form = imf_func.central_imf(self, recipe_coeff)
+        self.imf_form = imf_func.central_imf(self, imf_recipe, recipe_coeff)
         self.mstar_true = self.mstar_chab[i_form]*self.imf_form + 0.*self.z
 
         for i in range(i_form-1, -1, -1):

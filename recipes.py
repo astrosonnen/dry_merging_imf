@@ -53,29 +53,40 @@ def limf_func_rhoc(z_form,a=0.3,b=1.):
 
 
 
-def central_imf(galaxy, coeff=(0.1,0.3)):
+def central_imf(galaxy, recipe='sigma', coeff=(0.1,0.3)):
+    """
 
-    if galaxy.recipe == 'sigma':
-        dtform = dtform_func(np.log10(galaxy.sigma_0))
-        return 10.**limf_func_CvD12(galaxy.mstar_chab[-1],galaxy.re[-1],dtform,coeff[0],coeff[1])
+    :param galaxy: ETG class object
+    :param recipe: string. Allowed values are 'density' and 'SigmaSF'
+    :param coeff: two-element tuple of floats
+    :return: float. IMF-normalization coefficient relative to a Chabrier IMF
 
-    elif galaxy.recipe == 'mstar':
-        z_form = z_form_mstar_func(np.log10(galaxy.mstar_chab_0))
-        return 10.**limf_func_rhoc(z_form,coeff[0],coeff[1])
+    This function assigns an IMF to the stellar population of a galaxy at the time of star formation.
+    Two recipes for assigning the IMF are implemented.
+    'density': We use
+    """
 
-    else:
-        raise ValueError("recipe must be one between 'sigma' and 'mstar'.")
+    if recipe == 'SigmaSF':
+        return 10.**limf_func_CvD12(galaxy.mstar_chab[-1], galaxy.re[-1], galaxy.dtform, coeff[0], coeff[1])
 
-
-def satellite_imf(lmstar,usesigma=True,coeff=(0.1,0.3)):
-
-    if usesigma:
-	dtform = dtform_func(np.log10(sigma_from_mstar(lmstar)))
-	re = re_from_mstar(lmstar)
-	return 10.**limf_func_CvD12(10.**lmstar,re,dtform,coeff[0],coeff[1])
+    elif recipe == 'density':
+        return 10.**limf_func_rhoc(galaxy.z_form, coeff[0], coeff[1])
 
     else:
+        raise ValueError("recipe must be one between 'SigmaSF' and 'density'.")
+
+
+def satellite_imf(lmstar, recipe='SigmaSF', coeff=(0.1,0.3)):
+
+    if recipe == 'SigmaSF':
+        dtform = dtform_func(np.log10(sigma_from_mstar(lmstar)))
+        re = re_from_mstar(lmstar)
+        return 10.**limf_func_CvD12(10.**lmstar,re,dtform,coeff[0],coeff[1])
+
+    elif recipe == 'mstar':
         z_form = z_form_mstar_func(lmstar)
         return 10.**limf_func_rhoc(z_form,coeff[0],coeff[1])
 
+    else:
+         raise ValueError("recipe must be one between 'sigma' and 'mstar'.")
 
