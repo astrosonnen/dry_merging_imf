@@ -1,11 +1,13 @@
 import numpy as np
-from scipy.interpolate import splrep, splev
+from scipy.interpolate import splrep, splev, splint
+from scipy.optimize import brentq
 
 N = 1001
 
 lmstars = np.linspace(9., 13., N)
 
 def mhalo_dist(lmhalo, z):    #halo mass distribution from Tinker et al. 2008. Not normalized.
+    # I believe this function returns dN/dlogNh. MUST DOUBLE-CHECK!!!
     lmref = 10. - np.log10(0.7)
     logsigminus = -0.64 + 0.11*(lmhalo - lmref) + 0.012*(lmhalo - lmref)**2 + 0.0006*(lmhalo - lmref)**3
     dlogsigminusdlogm = 0.11 + 2.*0.012*(lmhalo - lmref) + 3.*0.0006*(lmhalo - lmref)**2
@@ -19,6 +21,31 @@ def mhalo_dist(lmhalo, z):    #halo mass distribution from Tinker et al. 2008. N
     c = 1.19
 
     return ((sigma/b)**-a + 1)*np.exp(-c/sigma**2)/10.**lmhalo*dlogsigminusdlogm
+
+
+def generate_halos(N, lmhmin=12., lmhmax=14., z=0.):
+    """
+    generates a random sample of halo masses from Tinker et al. 2008 distribution
+    :param N: int. Sample size.
+    :param mmin: minimum halo mass (log10)
+    :param mmax: maximum halo mass (log10)
+    :param z: redshift
+    :return: numpy.ndarray of halo masses
+    """
+    lmhs = np.linspace(lmhmin, lmhmax, 101)
+    dist_spline = splrep(lmhs, mhalo_dist(lmhs, z))
+    def intfunc(lmh):
+        return splint(lmhmin, lmh, dist_spline)
+
+    norm = intfunc(lmhmax)
+
+    x = np.random.rand(N)*norm
+    lmhalos = 0.*x
+
+    for i in range(0, N):
+        lmhalos[i] = brentq(lambda lmh: intfunc(lmh) - x[i], lmhmin, lmhmax)
+
+    return lmhalos
 
 
 def mhfunc(lmstar, z):
@@ -36,9 +63,9 @@ def mhfunc(lmstar, z):
     beta0 = 0.4477
     betaz = 0.02564
     delta0 = 0.56
-    deltaa = 0.
+    deltaz = 0.
     gamma0 = 0.8202
-    gammaa = 1.8617
+    gammaz = 1.8617
 
     logm1 = m10 + m1z*z
     logms0 = mstar00 + mstar0z*z
@@ -48,14 +75,16 @@ def mhfunc(lmstar, z):
 
     return logm1 + beta*(lmstar-logms0) + (10.**(lmstar-logms0))**delta/(1.+(10.**(lmstar-logms0))**(-gamma)) - 0.5
 
-def mstarfunc_z0(lmhalo):
+
+def mstarfunc(lmhalo, z=0.):
     """
     inverse function of mhfunc
     :param lmhalo:
+    :param z:
     :return:
     """
     lmstars = np.linspace(9., 12., 1001)
-    lmhalos = mhfunc(lmstars, 0.)
+    lmhalos = mhfunc(lmstars, z)
     lmstar_spline = splrep(lmhalos, lmstars)
     return splev(lmhalo, lmstar_spline)
     

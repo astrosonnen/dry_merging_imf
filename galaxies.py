@@ -2,7 +2,7 @@ import numpy as np
 from cgsconstants import *
 from scipy.interpolate import splrep,splev
 import shmrs
-import imf_func
+import recipes
 from scipy.integrate import quad
 
 A = 0.0104
@@ -51,16 +51,16 @@ class ETG:
     def get_z_form(self, sf_recipe='sigma'):
 
         if sf_recipe == 'sigma':
-            self.z_form = imf_func.z_form_sigma_func(np.log10(self.sigma_0))
+            self.z_form = recipes.z_form_sigma_func(np.log10(self.sigma_0))
 
         elif sf_recipe == 'mstar':
-            self.z_form = imf_func.z_form_mstar_func(np.log10(self.mstar_chab_0))
+            self.z_form = recipes.z_form_mstar_func(np.log10(self.mstar_chab_0))
 
         else:
             raise ValueError("sf_recipe must be one between 'sigma' and 'mstar'.")
 
     def get_dtform(self):
-        self.dtform = imf_func.dtform_func(np.log10(self.sigma_0))
+        self.dtform = recipes.dtform_func(np.log10(self.sigma_0))
 
     def evolve(self, ximin=0.03, dz=0.001, zup=2., imf_recipe='SigmaSF', recipe_coeff=(0.1, 0.3)):
 
@@ -92,7 +92,7 @@ class ETG:
                 return 10.**(splev(np.log10(mhalo), lmhalo_spline) - np.log10(mhalo))
 
             # calculates what is the minimum mass of galaxies that have already formed stars at this redshift.
-            lmstar_form = imf_func.lmstar_zfunc(self.z[i])
+            lmstar_form = recipes.lmstar_zfunc(self.z[i])
             ximh_min = shmrs.mhfunc(lmstar_form, self.z[i])
             ximinmin = 10.**ximh_min/self.mhalo[i]
 
@@ -108,7 +108,7 @@ class ETG:
                 self.dmstar_chab_dz[i] = -A*imz*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
 
                 imtz = quad(
-                    lambda xi: imf_func.satellite_imf(
+                    lambda xi: recipes.satellite_imf(
                         np.log10(xi*self.mhalo[i]*rfunc(xi*self.mhalo[i])), imf_recipe, recipe_coeff)* \
                                rfunc(xi*self.mhalo[i])*xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin_eff, 1.)[0]
 
@@ -134,7 +134,7 @@ class ETG:
             self.re[i] = self.re[i-1]*(1. - 0.5*(self.mstardlnre_dz[i]/self.mstar_chab[i] + \
                                                  self.mstardlnre_dz[i-1]/self.mstar_chab[i-1])*dz)
 
-        self.imf_form = imf_func.central_imf(self, imf_recipe, recipe_coeff)
+        self.imf_form = recipes.central_imf(self, imf_recipe, recipe_coeff)
         self.mstar_true = self.mstar_chab[i_form]*self.imf_form + 0.*self.z
 
         for i in range(i_form-1, -1, -1):

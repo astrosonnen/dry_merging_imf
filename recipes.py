@@ -1,5 +1,5 @@
-from sonnentools.cgsconstants import *
 import numpy as np
+from cgsconstants import *
 from cosmolopy import density, distance
 from scipy.interpolate import splrep,splev
 
@@ -8,9 +8,9 @@ z_grid = np.linspace(0., 5., Nz)
 logt_grid = 0.*z_grid
 rhoc_grid = 0.*z_grid
 
-for i in range(1, Nz):
-    logt_grid[i] = np.log10(distance.lookback_time(z_grid[i]), **cosmo) - 9.
-    rhoc_grid[i] = density.cosmo_densities(**cosmo)*distance.e_z(z_grid[i], **cosmo)
+for i in range(0, Nz):
+    logt_grid[i] = np.log10(distance.lookback_time(z_grid[i], 0., **cosmo)) - 9.
+    rhoc_grid[i] = density.cosmo_densities(**cosmo)[0]*distance.e_z(z_grid[i], **cosmo)*M_Sun/Mpc**3
 
 z_spline = splrep(logt_grid[1:], z_grid[1:])
 logt_spline = splrep(z_grid[1:], logt_grid[1:])
