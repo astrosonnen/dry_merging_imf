@@ -1,7 +1,7 @@
 import numpy as np
 from cgsconstants import *
 from cosmolopy import density, distance
-from scipy.interpolate import splrep,splev
+from scipy.interpolate import splrep, splev
 
 Nz = 1001
 z_grid = np.linspace(0., 5., Nz)
@@ -16,12 +16,13 @@ z_spline = splrep(logt_grid[1:], z_grid[1:])
 logt_spline = splrep(z_grid[1:], logt_grid[1:])
 rhoc_spline = splrep(z_grid[1:], rhoc_grid[1:])
 
+
 def z_form_mstar_func(lmstar):
     return splev(0.427 + 0.053*lmstar, z_spline)
 
 
 def z_form_vdisp_func(lvdisp):
-    return splev(0.46 + 0.238*lvdisp,z_spline)
+    return splev(0.46 + 0.238*lvdisp, z_spline)
 
 
 def dtform_func(lvdisp):
@@ -29,24 +30,47 @@ def dtform_func(lvdisp):
 
 
 def lmstar_zfunc(z):
-    logt = splev(z,logt_spline)
+    logt = splev(z, logt_spline)
     return logt/0.053 - 0.427/0.053
 
 
-def SigmaSF(mstar,re,dt):
+def sigmasf(mstar, re, dt):
     return 0.5*mstar/(np.pi*re**2)/dt
 
 
-def vdisp_mstar_rel(lmstar): #from Thomas et al. 2005 eq. (2)
+def vdisp_mstar_rel(lmstar):  # from Thomas et al. 2005 eq. (2)
     return 10.**((lmstar - 0.63)/4.52)
 
 
-def re_mstar_rel(lmstar): #from Newman et al. 2012, SDSS bin
+def re_mstar_rel(lmstar):  # from Newman et al. 2012, SDSS bin
     return 10.**(0.54 + 0.57*(lmstar - 11.))
 
 
-def limf_func_CvD12(mstar, re, dt, coeff=(0.1,0.3)):
-    return coeff[0] + coeff[1]*(np.log10(SigmaSF(mstar, re, dt)) - 1.)
+def generate_reff(lmstar_sample):  # draws values of Re from the mass-radius relation of Newman et al. (2012)
+    return re_mstar_rel(lmstar_sample) + np.random.normal(0., 0.16, len(np.atleast_1d(lmstar_sample)))
+
+
+def generate_veldisp_from_fp(lmstar_sample, reff_sample):
+    """
+    draws velocity dispersions given mstar and Re using the stellar mass fundamental plane by Hyde & Bernardi (2011b).
+    does NOT add any scatter! This is because this function is meant to be used when scatter has already been added
+    in generating the values of Re...
+    Is this consistent with function vdisp_mstar_rel from Thomas et al. 2005? Don't know...
+    :param lmstar_sample:
+    :param reff_sample:
+    :return:
+    """
+
+    a = 1.3989
+    b = 0.3164
+    c = 4.4858
+    scat = 0.0894
+
+    return 10.**(1./a*(reff_sample + 2.5*b*(lmstar_sample - 2.*np.log10(reff_sample) - np.log10(2.*np.pi)) - c))
+
+
+def limf_func_cvd12(mstar, re, dt, coeff=(0.1, 0.3)):
+    return coeff[0] + coeff[1]*(np.log10(sigmasf(mstar, re, dt)) - 1.)
 
 
 def limf_func_rhoc(z_form, coeff=(0.3, 1.0)):
@@ -54,7 +78,7 @@ def limf_func_rhoc(z_form, coeff=(0.3, 1.0)):
     return coeff[0] + coeff[1]*(np.log10(rhoc) + 28.)
 
 
-def central_imf(galaxy, recipe='SigmaSF', coeff=(0.1,0.3)):
+def central_imf(galaxy, recipe='SigmaSF', coeff=(0.1, 0.3)):
     """
 
     :param galaxy: ETG class object
@@ -70,7 +94,7 @@ def central_imf(galaxy, recipe='SigmaSF', coeff=(0.1,0.3)):
     """
 
     if recipe == 'SigmaSF':
-        return 10.**limf_func_CvD12(galaxy.mstar_chab[-1], galaxy.re[-1], galaxy.dtform, coeff[0], coeff[1])
+        return 10.**limf_func_cvd12(galaxy.mstar_chab[-1], galaxy.re[-1], galaxy.dtform, coeff)
 
     elif recipe == 'density':
         return 10.**limf_func_rhoc(galaxy.z_form, coeff)
@@ -79,17 +103,17 @@ def central_imf(galaxy, recipe='SigmaSF', coeff=(0.1,0.3)):
         raise ValueError("recipe must be one between 'SigmaSF' and 'density'.")
 
 
-def satellite_imf(lmstar, recipe='SigmaSF', coeff=(0.1,0.3)):
+def satellite_imf(lmstar, recipe='SigmaSF', coeff=(0.1, 0.3)):
 
     if recipe == 'SigmaSF':
         dtform = dtform_func(np.log10(vdisp_mstar_rel(lmstar)))
         re = re_mstar_rel(lmstar)
-        return 10.**limf_func_CvD12(10.**lmstar, re, dtform, coeff[0], coeff[1])
+        return 10.**limf_func_cvd12(10.**lmstar, re, dtform, coeff)
 
     elif recipe == 'mstar':
         z_form = z_form_mstar_func(lmstar)
-        return 10.**limf_func_rhoc(z_form, coeff[0], coeff[1])
+        return 10.**limf_func_rhoc(z_form, coeff)
 
     else:
-         raise ValueError("recipe must be one between 'SigmaSF' and 'mstar'.")
+        raise ValueError("recipe must be one between 'SigmaSF' and 'mstar'.")
 
