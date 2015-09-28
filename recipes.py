@@ -85,7 +85,7 @@ def limf_func_rhoc(z_form, coeff=(0.3, 1.0)):
 def satellite_imf(lmstar, recipe='SigmaSF', coeff=(0.1, 0.3)):
 
     if recipe == 'SigmaSF':
-        dt_form = dt_form_func(np.log10(vdisp_mstar_rel(lmstar)))
+        dt_form = dt_form_mstar_func(lmstar)
         re = re_mstar_rel(lmstar)
         return 10.**limf_func_cvd12(10.**lmstar, re, dt_form, coeff)
 

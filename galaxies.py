@@ -62,9 +62,9 @@ class ETG:
             raise ValueError("sf_recipe must be one between 'sigma' and 'mstar'.")
 
 
-    def evolve(self, ximin=0.03, dz=0.001, zup=2., imf_recipe='SigmaSF', imf_coeff=(0.1, 0.3)):
+    def evolve(self, ximin=0.03, dz=0.01, z_up=2., imf_recipe='SigmaSF', imf_coeff=(0.1, 0.3)):
 
-        self.z = np.arange(0., zup, dz)
+        self.z = np.arange(0., z_up, dz)
 
         nz = len(self.z)
 
@@ -125,19 +125,19 @@ class ETG:
                 # but then our central galaxy shouldn't even exist!!
 
         for i in range(i_0-1, -1, -1):
-            self.mstar_chab[i] = self.mstar_chab[i+1] + 0.5*(self.dmstar_chab_dz[i] + self.dmstar_chab_dz[i+1])*dz
-            self.re[i] = self.re[i+1]*(1. + 0.5*(self.mstardlnre_dz[i]/self.mstar_chab[i] + \
+            self.mstar_chab[i] = self.mstar_chab[i+1] - 0.5*(self.dmstar_chab_dz[i] + self.dmstar_chab_dz[i+1])*dz
+            self.re[i] = self.re[i+1]*(1. - 0.5*(self.mstardlnre_dz[i]/self.mstar_chab[i] + \
                                                  self.mstardlnre_dz[i+1]/self.mstar_chab[i+1])*dz)
 
         for i in range(i_0+1, nz):
-            self.mstar_chab[i] = self.mstar_chab[i-1] - 0.5*(self.dmstar_chab_dz[i] + self.dmstar_chab_dz[i-1])*dz
-            self.re[i] = self.re[i-1]*(1. - 0.5*(self.mstardlnre_dz[i]/self.mstar_chab[i] + \
+            self.mstar_chab[i] = self.mstar_chab[i-1] + 0.5*(self.dmstar_chab_dz[i] + self.dmstar_chab_dz[i-1])*dz
+            self.re[i] = self.re[i-1]*(1. + 0.5*(self.mstardlnre_dz[i]/self.mstar_chab[i] + \
                                                  self.mstardlnre_dz[i-1]/self.mstar_chab[i-1])*dz)
 
         if imf_recipe == 'SigmaSF':
-            self.imf_form = 10.**limf_func_cvd12(self.mstar_chab[i_form], self.re[i_form], self.dt_form, imf_coeff)
+            self.imf_form = 10.**recipes.limf_func_cvd12(self.mstar_chab[i_form], self.re[i_form], self.dt_form, imf_coeff)
         elif imf_recipe == 'density':
-            self.imf_form = 10.**limf_func_rhoc(self.z_form, imf_coeff)
+            self.imf_form = 10.**recipes.limf_func_rhoc(self.z_form, imf_coeff)
         else:
             raise ValueError("recipe must be one between 'SigmaSF' and 'density'.")
 
