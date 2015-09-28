@@ -9,7 +9,7 @@ logt_grid = 0.*z_grid
 rhoc_grid = 0.*z_grid
 
 for i in range(0, Nz):
-    logt_grid[i] = np.log10(distance.lookback_time(z_grid[i], 0., **cosmo)) - 9.
+    logt_grid[i] = np.log10(distance.lookback_time(z_grid[i], 0., **cosmo)/yr) - 9.
     rhoc_grid[i] = density.cosmo_densities(**cosmo)[0]*distance.e_z(z_grid[i], **cosmo)*M_Sun/Mpc**3
 
 z_spline = splrep(logt_grid[1:], z_grid[1:])
@@ -17,16 +17,20 @@ logt_spline = splrep(z_grid[1:], logt_grid[1:])
 rhoc_spline = splrep(z_grid[1:], rhoc_grid[1:])
 
 
-def z_form_mstar_func(lmstar):
-    return splev(0.427 + 0.053*lmstar, z_spline)
-
-
 def z_form_vdisp_func(lvdisp):
     return splev(0.46 + 0.238*lvdisp, z_spline)
 
 
-def dtform_func(lvdisp):
+def z_form_mstar_func(lmstar):
+    return splev(0.427 + 0.053*lmstar, z_spline)
+
+
+def dt_form_vdisp_func(lvdisp):
     return 10.**(3.44 - 1.68*lvdisp + 9.)
+
+
+def dt_form_mstar_func(lmstar):
+    return 10.**(3.67 - 0.37*lmstar + 9.)
 
 
 def lmstar_zfunc(z):
@@ -52,7 +56,7 @@ def generate_reff(lmstar_sample):  # draws values of Re from the mass-radius rel
 
 def generate_veldisp_from_fp(lmstar_sample, reff_sample):
     """
-    draws velocity dispersions given mstar and Re using the stellar mass fundamental plane by Hyde & Bernardi (2011b).
+    draws velocity dispersions given mstar and Re using the stellar mass fundamental plane by Hyde & Bernardi (2009b).
     does NOT add any scatter! This is because this function is meant to be used when scatter has already been added
     in generating the values of Re...
     Is this consistent with function vdisp_mstar_rel from Thomas et al. 2005? Don't know...
@@ -66,7 +70,7 @@ def generate_veldisp_from_fp(lmstar_sample, reff_sample):
     c = 4.4858
     scat = 0.0894
 
-    return 10.**(1./a*(reff_sample + 2.5*b*(lmstar_sample - 2.*np.log10(reff_sample) - np.log10(2.*np.pi)) - c))
+    return 10.**(1./a*(np.log10(reff_sample) + 2.5*b*(lmstar_sample - 2.*np.log10(reff_sample) - np.log10(2.*np.pi)) - c))
 
 
 def limf_func_cvd12(mstar, re, dt, coeff=(0.1, 0.3)):
@@ -78,42 +82,17 @@ def limf_func_rhoc(z_form, coeff=(0.3, 1.0)):
     return coeff[0] + coeff[1]*(np.log10(rhoc) + 28.)
 
 
-def central_imf(galaxy, recipe='SigmaSF', coeff=(0.1, 0.3)):
-    """
-
-    :param galaxy: ETG class object
-    :param recipe: string. Allowed values are 'density' and 'SigmaSF'
-    :param coeff: two-element tuple of floats
-    :return: float. IMF-normalization coefficient relative to a Chabrier IMF
-
-    This function assigns an IMF to the stellar population of a galaxy at the time of star formation.
-    Two recipes for assigning the IMF are implemented.
-    'SigmaSF': The IMF normalization scales with the surface density of star formation, following the idea of
-    Conroy and van Dokkum (2012).
-    'density': The IMF normalization scales with the critical density of the Universe at the time of star formation
-    """
-
-    if recipe == 'SigmaSF':
-        return 10.**limf_func_cvd12(galaxy.mstar_chab[-1], galaxy.re[-1], galaxy.dtform, coeff)
-
-    elif recipe == 'density':
-        return 10.**limf_func_rhoc(galaxy.z_form, coeff)
-
-    else:
-        raise ValueError("recipe must be one between 'SigmaSF' and 'density'.")
-
-
 def satellite_imf(lmstar, recipe='SigmaSF', coeff=(0.1, 0.3)):
 
     if recipe == 'SigmaSF':
-        dtform = dtform_func(np.log10(vdisp_mstar_rel(lmstar)))
+        dt_form = dt_form_func(np.log10(vdisp_mstar_rel(lmstar)))
         re = re_mstar_rel(lmstar)
-        return 10.**limf_func_cvd12(10.**lmstar, re, dtform, coeff)
+        return 10.**limf_func_cvd12(10.**lmstar, re, dt_form, coeff)
 
-    elif recipe == 'mstar':
+    elif recipe == 'density':
         z_form = z_form_mstar_func(lmstar)
         return 10.**limf_func_rhoc(z_form, coeff)
 
     else:
-        raise ValueError("recipe must be one between 'SigmaSF' and 'mstar'.")
+        raise ValueError("recipe must be one between 'SigmaSF' and 'density'.")
 

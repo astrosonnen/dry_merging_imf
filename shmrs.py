@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.interpolate import splrep, splev, splint
 from scipy.optimize import brentq
+from cgsconstants import h
 
 N = 1001
 
@@ -48,6 +49,10 @@ def generate_halos(N, lmhmin=12., lmhmax=14., z=0.):
     return lmhalos
 
 
+def generate_mstar(lmhalos, z=0., scat=0.1):
+    return mstarfunc(lmhalos, z) + np.random.normal(0., scat, len(np.atleast_1d(lmhalos)))
+
+
 def mhfunc(lmstar, z):
     """
     stellar-to-halo mass relation from Leauthaud et al. 2012.
@@ -56,9 +61,11 @@ def mhfunc(lmstar, z):
     :return:
     """
 
-    mstar00 = 10.7871
+    h_l12 = 0.72
+
+    mstar00 = 10.7871 + np.log10(h_l12/h)
     mstar0z = 0.3623
-    m10 = 12.4131
+    m10 = 12.4131 + np.log10(h_l12/h)
     m1z = 0.3785
     beta0 = 0.4477
     betaz = 0.02564

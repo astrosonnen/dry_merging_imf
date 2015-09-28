@@ -37,7 +37,7 @@ class ETG:
         self.re_0 = re_0
         self.sigma_0 = sigma_0
         self.z_form = z_form
-        self.dtform = None
+        self.dt_form = None
         self.imf_form = None
         self.z = None
         self.mhalo = None
@@ -48,21 +48,21 @@ class ETG:
         self.dmstar_true_dz = None
         self.mstardlnre_dz = None
 
-    def get_z_form(self, sf_recipe='sigma'):
+    def get_sf_history(self, sf_recipe='veldisp'):
 
-        if sf_recipe == 'sigma':
-            self.z_form = recipes.z_form_sigma_func(np.log10(self.sigma_0))
+        if sf_recipe == 'veldisp':
+            self.z_form = recipes.z_form_vdisp_func(np.log10(self.sigma_0))
+            self.dt_form = recipes.dt_form_vdisp_func(np.log10(self.sigma_0))
 
         elif sf_recipe == 'mstar':
+            self.z_form = recipes.z_form_mstar_func(np.log10(self.mstar_chab_0))
             self.z_form = recipes.z_form_mstar_func(np.log10(self.mstar_chab_0))
 
         else:
             raise ValueError("sf_recipe must be one between 'sigma' and 'mstar'.")
 
-    def get_dtform(self):
-        self.dtform = recipes.dtform_func(np.log10(self.sigma_0))
 
-    def evolve(self, ximin=0.03, dz=0.001, zup=2., imf_recipe='SigmaSF', recipe_coeff=(0.1, 0.3)):
+    def evolve(self, ximin=0.03, dz=0.001, zup=2., imf_recipe='SigmaSF', imf_coeff=(0.1, 0.3)):
 
         self.z = np.arange(0., zup, dz)
 
@@ -109,7 +109,7 @@ class ETG:
 
                 imtz = quad(
                     lambda xi: recipes.satellite_imf(
-                        np.log10(xi*self.mhalo[i]*rfunc(xi*self.mhalo[i])), imf_recipe, recipe_coeff)* \
+                        np.log10(xi*self.mhalo[i]*rfunc(xi*self.mhalo[i])), imf_recipe, imf_coeff)* \
                                rfunc(xi*self.mhalo[i])*xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin_eff, 1.)[0]
 
                 self.dmstar_true_dz[i] = -A*imtz*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
@@ -134,7 +134,13 @@ class ETG:
             self.re[i] = self.re[i-1]*(1. - 0.5*(self.mstardlnre_dz[i]/self.mstar_chab[i] + \
                                                  self.mstardlnre_dz[i-1]/self.mstar_chab[i-1])*dz)
 
-        self.imf_form = recipes.central_imf(self, imf_recipe, recipe_coeff)
+        if imf_recipe == 'SigmaSF':
+            self.imf_form = 10.**limf_func_cvd12(self.mstar_chab[i_form], self.re[i_form], self.dt_form, imf_coeff)
+        elif imf_recipe == 'density':
+            self.imf_form = 10.**limf_func_rhoc(self.z_form, imf_coeff)
+        else:
+            raise ValueError("recipe must be one between 'SigmaSF' and 'density'.")
+
         self.mstar_true = self.mstar_chab[i_form]*self.imf_form + 0.*self.z
 
         for i in range(i_form-1, -1, -1):
