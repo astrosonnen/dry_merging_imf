@@ -38,7 +38,8 @@ veldisp_sample = recipes.generate_veldisp_from_fp(lmstar_sample, reff_sample)
 
 gal0 = galaxies.ETG(z_0=0., mstar_chab_0=1e11, mhalo_0=4.4846e12, re_0=5., sigma_0=250.)
 gal0.get_sf_history()
-gal0.evolve(dz = 0.001, z_up = gal0.z_form)
+gal0.evolve(dz = 0.01, z_up = gal0.z_form)
+gal0.snapshot(1.)
 
 centrals = []
 for i in range(0, Ngal):

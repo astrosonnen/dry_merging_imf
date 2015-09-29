@@ -5,7 +5,8 @@ from cgsconstants import h
 
 N = 1001
 
-lmstars = np.linspace(9., 13., N)
+lmstar_grid = np.linspace(9., 13., N)
+
 
 def mhalo_dist(lmhalo, z):    #halo mass distribution from Tinker et al. 2008. Not normalized.
     # I believe this function returns dN/dlogNh. MUST DOUBLE-CHECK!!!
@@ -90,18 +91,16 @@ def mstarfunc(lmhalo, z=0.):
     :param z:
     :return:
     """
-    lmstars = np.linspace(9., 12., 1001)
-    lmhalos = mhfunc(lmstars, z)
-    lmstar_spline = splrep(lmhalos, lmstars)
+    lmhalos = mhfunc(lmstar_grid, z)
+    lmstar_spline = splrep(lmhalos, lmstar_grid)
     return splev(lmhalo, lmstar_spline)
     
 
-def rstarh(lmhalo,z):
+def rstarh(lmhalo, z):
 
-    lmhalos = mhfunc(lmstars, z)
+    lmhalos = mhfunc(lmstar_grid, z)
 
-    lmh_spline = splrep(lmhalos, lmstars)
+    lmh_spline = splrep(lmhalos, lmstar_grid)
 
     return 10.**(splev(lmhalo, lmh_spline) - lmhalo)
-
 

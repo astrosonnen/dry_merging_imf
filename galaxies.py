@@ -47,6 +47,8 @@ class ETG:
         self.dmstar_chab_dz = None
         self.dmstar_true_dz = None
         self.mstardlnre_dz = None
+        self.z_snap = None
+        self.mstar_chab_snap = None
 
     def get_sf_history(self, sf_recipe='veldisp'):
 
@@ -78,10 +80,13 @@ class ETG:
         self.dmstar_chab_dz = 0.*self.z
         self.dmstar_true_dz = 0.*self.z
         self.mstardlnre_dz = 0.*self.z
+        self.lnradrat = 0.*self.z
 
         self.mstar_chab = 0.*self.z + self.mstar_chab_0
         self.mstar_true = 0.*self.z
         self.re = 0.*self.z + self.re_0
+
+        self.ire = 0.*self.z
 
         for i in range(0, nz):
 
@@ -145,3 +150,19 @@ class ETG:
 
         for i in range(i_form-1, -1, -1):
             self.mstar_true[i] = self.mstar_true[i+1] + 0.5*(self.dmstar_true_dz[i] + self.dmstar_true_dz[i+1])*dz
+
+
+    def snapshot(self, z_snap=1., ximin=0.03):
+        self.z_snap = z_snap
+
+        def mhalo_func(z):
+            return 1e12*((self.mhalo_0/1e12)**(1.-bpar) - (1-bpar)/H0*Mdot/1e12*izfunc(z, self.z_0))**(1./(1.-bpar))
+
+        self.mhalo_snap = mhalo_func(self.z_snap)
+
+        def dmstar_chab(z):
+            imz = quad(
+                    lambda xi: shmrs.rstarh(np.log10(xi*mhalo_func(z)), z)*xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
+            return -A*imz*mhalo_func(z)*(mhalo_func(z)/1e12)**alpha*(1.+z)**etap
+
+        self.mstar_chab_snap = quad(dmstar_chab, self.z_0, self.z_snap)[0] + self.mstar_chab_0
