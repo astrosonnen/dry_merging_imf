@@ -1,11 +1,12 @@
 import numpy as np
 from scipy.interpolate import splrep, splev, splint
 from scipy.optimize import brentq
+from scipy.integrate import quad
 from cgsconstants import h
 
 N = 1001
 
-lmstar_grid = np.linspace(9., 13., N)
+lmstar_grid = np.linspace(9., 12.5, N)
 
 
 def mhalo_dist(lmhalo, z):    #halo mass distribution from Tinker et al. 2008. Not normalized.
@@ -82,6 +83,25 @@ def mhfunc(lmstar, z):
     gamma = gamma0 + gammaz*z
 
     return logm1 + beta*(lmstar-logms0) + (10.**(lmstar-logms0))**delta/(1.+(10.**(lmstar-logms0))**(-gamma)) - 0.5
+
+
+def mhalo_given_mstar(lmstar, z):
+
+    scat_mstar = 0.17
+
+    lmhalo_grid = mhfunc(lmstar_grid, z)
+    lmstar_spline = splrep(lmhalo_grid, lmstar_grid)
+
+    def intfunc(lmhalo):
+        lmstar_mu = splev(lmhalo, lmstar_spline)
+        p_mstar = 1./(2.*np.pi)/scat_mstar*np.exp(-0.5*(lmstar - lmstar_mu)**2/scat_mstar**2)
+        p_mhalo = mhalo_dist(lmhalo, z)
+        return p_mstar*p_mhalo
+
+    num = quad(lambda lmhalo: intfunc(lmhalo)*lmhalo, lmhalo_grid[0], lmhalo_grid[-1])[0]
+    den = quad(lambda lmhalo: intfunc(lmhalo), lmhalo_grid[0], lmhalo_grid[-1])[0]
+
+    return num/den
 
 
 def mstarfunc(lmhalo, z=0.):

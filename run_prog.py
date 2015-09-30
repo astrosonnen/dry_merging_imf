@@ -36,6 +36,8 @@ lmhalo_sample = lmhalo_cut[sample]
 reff_sample = recipes.generate_reff(lmstar_sample)
 veldisp_sample = recipes.generate_veldisp_from_fp(lmstar_sample, reff_sample)
 
+mhalo0 = shmrs.mhalo_given_mstar(11., 0.)
+
 gal0 = galaxies.ETG(z_0=0., mstar_chab_0=1e11, mhalo_0=4.4846e12, re_0=5., sigma_0=250.)
 gal0.get_sf_history()
 gal0.evolve(dz = 0.01, z_up = gal0.z_form)
@@ -49,5 +51,6 @@ for i in range(0, Ngal):
     central.get_sf_history()
 
     central.evolve(z_up = central.z_form)
+    central.snapshot(2.)
 
     centrals.append(central)
