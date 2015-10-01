@@ -85,9 +85,9 @@ def mhfunc(lmstar, z):
     return logm1 + beta*(lmstar-logms0) + (10.**(lmstar-logms0))**delta/(1.+(10.**(lmstar-logms0))**(-gamma)) - 0.5
 
 
-def mhalo_given_mstar(lmstar, z):
+def lmhalo_given_lmstar(lmstar, z):
 
-    scat_mstar = 0.17
+    scat_mstar = 0.20
 
     lmhalo_grid = mhfunc(lmstar_grid, z)
     lmstar_spline = splrep(lmhalo_grid, lmstar_grid)
@@ -123,4 +123,3 @@ def rstarh(lmhalo, z):
     lmh_spline = splrep(lmhalos, lmstar_grid)
 
     return 10.**(splev(lmhalo, lmh_spline) - lmhalo)
-

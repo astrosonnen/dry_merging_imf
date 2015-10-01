@@ -64,9 +64,9 @@ class ETG:
             raise ValueError("sf_recipe must be one between 'sigma' and 'mstar'.")
 
 
-    def evolve(self, ximin=0.03, dz=0.01, z_up=2., imf_recipe='SigmaSF', imf_coeff=(0.1, 0.3)):
+    def evolve(self, ximin=0.03, dz=0.01, z_low=0., z_up=2., imf_recipe='SigmaSF', imf_coeff=(0.1, 0.3)):
 
-        self.z = np.arange(0., z_up, dz)
+        self.z = np.arange(z_low, z_up, dz)
 
         nz = len(self.z)
 
@@ -143,13 +143,15 @@ class ETG:
             self.imf_form = 10.**recipes.limf_func_cvd12(self.mstar_chab[i_form], self.re[i_form], self.dt_form, imf_coeff)
         elif imf_recipe == 'density':
             self.imf_form = 10.**recipes.limf_func_rhoc(self.z_form, imf_coeff)
+        elif imf_recipe == 'mstar':
+            self.imf_form =10.**recipes.limf_func_mstar(self.mstar_chab[i_form], imf_coeff)
         else:
             raise ValueError("recipe must be one between 'SigmaSF' and 'density'.")
 
         self.mstar_true = self.mstar_chab[i_form]*self.imf_form + 0.*self.z
 
         for i in range(i_form-1, -1, -1):
-            self.mstar_true[i] = self.mstar_true[i+1] + 0.5*(self.dmstar_true_dz[i] + self.dmstar_true_dz[i+1])*dz
+            self.mstar_true[i] = self.mstar_true[i+1] - 0.5*(self.dmstar_true_dz[i] + self.dmstar_true_dz[i+1])*dz
 
 
     def snapshot(self, z_snap=1., ximin=0.03):

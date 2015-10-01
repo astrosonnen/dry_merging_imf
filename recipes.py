@@ -82,6 +82,10 @@ def limf_func_rhoc(z_form, coeff=(0.3, 1.0)):
     return coeff[0] + coeff[1]*(np.log10(rhoc) + 28.)
 
 
+def limf_func_mstar(lmstar, coeff=(3., 0.2)):
+    return (2./np.pi*np.arctan((lmstar - 11.2)*coeff[0]) + 0.8)*coeff[1]
+
+
 def satellite_imf(lmstar, recipe='SigmaSF', coeff=(0.1, 0.3)):
 
     if recipe == 'SigmaSF':
@@ -92,6 +96,9 @@ def satellite_imf(lmstar, recipe='SigmaSF', coeff=(0.1, 0.3)):
     elif recipe == 'density':
         z_form = z_form_mstar_func(lmstar)
         return 10.**limf_func_rhoc(z_form, coeff)
+
+    elif recipe == 'mstar':
+        return 10.**(limf_func_mstar(lmstar, coeff))
 
     else:
         raise ValueError("recipe must be one between 'SigmaSF' and 'density'.")
