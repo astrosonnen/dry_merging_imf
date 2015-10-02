@@ -44,11 +44,14 @@ class ETG:
         self.mstar_chab = None
         self.mstar_true = None
         self.re = None
+        self.veldisp = None
         self.dmstar_chab_dz = None
         self.dmstar_true_dz = None
         self.mstardlnre_dz = None
+        self.mstardlnsigma_dz = None
         self.z_snap = None
         self.mstar_chab_snap = None
+        self.aimf = None
 
     def get_sf_history(self, sf_recipe='veldisp'):
 
@@ -80,11 +83,13 @@ class ETG:
         self.dmstar_chab_dz = 0.*self.z
         self.dmstar_true_dz = 0.*self.z
         self.mstardlnre_dz = 0.*self.z
+        self.mstardlnsigma_dz = 0.*self.z
         self.lnradrat = 0.*self.z
 
         self.mstar_chab = 0.*self.z + self.mstar_chab_0
         self.mstar_true = 0.*self.z
         self.re = 0.*self.z + self.re_0
+        self.veldisp = 0.*self.z + self.sigma_0
 
         self.ire = 0.*self.z
 
@@ -122,7 +127,11 @@ class ETG:
                 ire = quad(lambda xi: (2.-np.log(1.+xi**(2.-betaR))/np.log(1.+xi))*rfunc(xi*self.mhalo[i])* \
                                xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin_eff, 1.)[0]
 
+                isigma = quad(lambda xi: -0.5*(1. - np.log(1.+xi**(2.-betaR))/np.log(1.+xi))*rfunc(xi*self.mhalo[i])* \
+                               xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin_eff, 1.)[0]
+
                 self.mstardlnre_dz[i] = -A*ire*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
+                self.mstardlnsigma_dz[i] = -A*isigma*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
 
             else:
                 pass
@@ -133,18 +142,22 @@ class ETG:
             self.mstar_chab[i] = self.mstar_chab[i+1] - 0.5*(self.dmstar_chab_dz[i] + self.dmstar_chab_dz[i+1])*dz
             self.re[i] = self.re[i+1]*(1. - 0.5*(self.mstardlnre_dz[i]/self.mstar_chab[i] + \
                                                  self.mstardlnre_dz[i+1]/self.mstar_chab[i+1])*dz)
+            self.veldisp[i] = self.veldisp[i+1]*(1. - 0.5*(self.mstardlnsigma_dz[i]/self.mstar_chab[i] + \
+                                                 self.mstardlnsigma_dz[i+1]/self.mstar_chab[i+1])*dz)
 
         for i in range(i_0+1, nz):
             self.mstar_chab[i] = self.mstar_chab[i-1] + 0.5*(self.dmstar_chab_dz[i] + self.dmstar_chab_dz[i-1])*dz
             self.re[i] = self.re[i-1]*(1. + 0.5*(self.mstardlnre_dz[i]/self.mstar_chab[i] + \
                                                  self.mstardlnre_dz[i-1]/self.mstar_chab[i-1])*dz)
+            self.veldisp[i] = self.veldisp[i-1]*(1. + 0.5*(self.mstardlnsigma_dz[i]/self.mstar_chab[i] + \
+                                                 self.mstardlnsigma_dz[i-1]/self.mstar_chab[i-1])*dz)
 
         if imf_recipe == 'SigmaSF':
             self.imf_form = 10.**recipes.limf_func_cvd12(self.mstar_chab[i_form], self.re[i_form], self.dt_form, imf_coeff)
         elif imf_recipe == 'density':
             self.imf_form = 10.**recipes.limf_func_rhoc(self.z_form, imf_coeff)
         elif imf_recipe == 'mstar':
-            self.imf_form =10.**recipes.limf_func_mstar(self.mstar_chab[i_form], imf_coeff)
+            self.imf_form =10.**recipes.limf_func_mstar(np.log10(self.mstar_chab[i_form]), imf_coeff)
         else:
             raise ValueError("recipe must be one between 'SigmaSF' and 'density'.")
 
@@ -152,6 +165,8 @@ class ETG:
 
         for i in range(i_form-1, -1, -1):
             self.mstar_true[i] = self.mstar_true[i+1] - 0.5*(self.dmstar_true_dz[i] + self.dmstar_true_dz[i+1])*dz
+
+        self.aimf = self.mstar_true/self.mstar_chab
 
 
     def snapshot(self, z_snap=1., ximin=0.03):

@@ -42,16 +42,23 @@ def sigmasf(mstar, re, dt):
     return 0.5*mstar/(np.pi*re**2)/dt
 
 
-def vdisp_mstar_rel(lmstar):  # from Thomas et al. 2005 eq. (2)
+def vdisp_mstar_rel_thomas(lmstar):  # from Thomas et al. 2005 eq. (2)
     return 10.**((lmstar - 0.63)/4.52)
 
 
-def re_mstar_rel(lmstar):  # from Newman et al. 2012, SDSS bin
+def vdisp_mstar_rel_auger(lmstar):  # from Auger et al. 2010
+    return 10.**(2.34 + 0.18*(lmstar - 11.))
+
+def re_mstar_rel_z0(lmstar):  # from Newman et al. 2012, SDSS bin
     return 10.**(0.54 + 0.57*(lmstar - 11.))
 
 
-def generate_reff(lmstar_sample):  # draws values of Re from the mass-radius relation of Newman et al. (2012)
-    return re_mstar_rel(lmstar_sample) + np.random.normal(0., 0.16, len(np.atleast_1d(lmstar_sample)))
+def re_mstar_rel(lmstar, z):  # from Newman et al. 2012, z-dependent
+    return 10.**(0.38 + 0.57*(lmstar - 11.) -0.26*(z - 1.))
+
+
+def generate_reff(lmstar_sample, z):  # draws values of Re from the mass-radius relation of Newman et al. (2012)
+    return re_mstar_rel(lmstar_sample, z) + np.random.normal(0., 0.22, len(np.atleast_1d(lmstar_sample)))
 
 
 def generate_veldisp_from_fp(lmstar_sample, reff_sample):
@@ -71,6 +78,10 @@ def generate_veldisp_from_fp(lmstar_sample, reff_sample):
     scat = 0.0894
 
     return 10.**(1./a*(np.log10(reff_sample) + 2.5*b*(lmstar_sample - 2.*np.log10(reff_sample) - np.log10(2.*np.pi)) - c))
+
+
+def generate_veldisp_from_mstar(lmstar_sample):
+    return 10.**(np.log10(vdisp_mstar_rel_auger(lmstar_sample)) + np.random.normal(0., 0.04, len(np.atleast_1d(lmstar_sample))))
 
 
 def limf_func_cvd12(mstar, re, dt, coeff=(0.1, 0.3)):
