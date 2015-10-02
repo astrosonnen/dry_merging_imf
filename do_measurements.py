@@ -13,8 +13,9 @@ def fit_mstar_re_fixed_z(lmstar_sample, lreff_sample, aimf_sample, guess=(0.3, 0
         return modelfunc(p) - aimf_sample
 
     par, cov = leastsq(errfunc, guess)
+    scat = (sum(errfunc(par)**2)/float(len(aimf_sample)))**0.5
 
-    return par
+    return par, scat
 
 
 def fit_mstar_sigma_fixed_z(lmstar_sample, lsigma_sample, aimf_sample, guess=(0.3, 0.3, 0.)):
@@ -26,14 +27,43 @@ def fit_mstar_sigma_fixed_z(lmstar_sample, lsigma_sample, aimf_sample, guess=(0.
         return modelfunc(p) - aimf_sample
 
     par, cov = leastsq(errfunc, guess)
+    scat = (sum(errfunc(par)**2)/float(len(aimf_sample)))**0.5
 
-    return par
+    return par, scat
+
+
+def fit_sigma_only(lsigma_sample, aimf_sample, guess=(1.3, 0.)):
+
+    def modelfunc(p):
+        return p[0] + p[1]*(lsigma_sample - 2.3)
+
+    def errfunc(p):
+        return modelfunc(p) - aimf_sample
+
+    par, cov = leastsq(errfunc, guess)
+    scat = (sum(errfunc(par)**2)/float(len(aimf_sample)))**0.5
+
+    return par, scat
+
+
+def fit_mstar_only(lmstar_sample, aimf_sample, guess=(0.3, 0.)):
+
+    def modelfunc(p):
+        return p[0] + p[1]*(lmstar_sample - 11.)
+
+    def errfunc(p):
+        return modelfunc(p) - aimf_sample
+
+    par, cov = leastsq(errfunc, guess)
+    scat = (sum(errfunc(par)**2)/float(len(aimf_sample)))**0.5
+
+    return par, scat
 
 
 if len(sys.argv) > 1:
     filename = sys.argv[1]
 else:
-    filename = 'output.dat'
+    filename = 'mstar_dep_imf_coeff0.5.dat'
 
 f = open(filename, 'r')
 galaxies = pickle.load(f)
@@ -64,16 +94,27 @@ for i in range(0, Ngal):
 pars_re2 = fit_mstar_re_fixed_z(lmstar2, lreff2, laimf2)
 pars_re0 = fit_mstar_re_fixed_z(lmstar0, lreff0, laimf0)
 
-pars_sigma2 = fit_mstar_sigma_fixed_z(lmstar2, lsigma2, laimf2)
-pars_sigma0 = fit_mstar_sigma_fixed_z(lmstar0, lsigma0, laimf0)
+pars_mstar_sigma2 = fit_mstar_sigma_fixed_z(lmstar2, lsigma2, laimf2)
+pars_mstar_sigma0 = fit_mstar_sigma_fixed_z(lmstar0, lsigma0, laimf0)
 
-print pars_re2
-print pars_re0
-print pars_sigma2
-print pars_sigma0
+pars_sigma0 = fit_sigma_only(lsigma0, laimf0)
+pars_mstar0 = fit_mstar_only(lmstar0, laimf0)
+
+print 'fit of dependence on mstar-sigma, z=2:', pars_mstar_sigma2
+print 'fit of dependence on mstar-sigma, z=0:', pars_mstar_sigma0
+print 'fit of dependence on sigma, z=0:', pars_sigma0
+print 'fit of dependence on mstar, z=0:', pars_mstar0
 
 import pylab
 pylab.scatter(lmstar2, laimf2)
 pylab.scatter(lmstar0, laimf0, color='r')
+pylab.xlabel('$\log{M_*}$')
+pylab.ylabel('$\log{\\alpha_{\mathrm{IMF}}}$')
+pylab.show()
+
+pylab.scatter(lsigma2, laimf2)
+pylab.scatter(lsigma0, laimf0, color='r')
+pylab.xlabel('$\sigma_*$')
+pylab.ylabel('$\log{\\alpha_{\mathrm{IMF}}}$')
 pylab.show()
 

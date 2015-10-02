@@ -49,12 +49,21 @@ def vdisp_mstar_rel_thomas(lmstar):  # from Thomas et al. 2005 eq. (2)
 def vdisp_mstar_rel_auger(lmstar):  # from Auger et al. 2010
     return 10.**(2.34 + 0.18*(lmstar - 11.))
 
+
+def vdisp_mstar_rel_mason(lmstar, z):  # from Auger et al. 2010
+    return 10.**(2.34 + 0.18*(lmstar - 11.) + 0.20*np.log10(1. + z))
+
+
+def inverse_vdisp_mstar_rel_auger(lvdisp):
+    return 10.**((lvdisp - 2.34)/0.18 + 11.)
+
+
 def re_mstar_rel_z0(lmstar):  # from Newman et al. 2012, SDSS bin
     return 10.**(0.54 + 0.57*(lmstar - 11.))
 
 
 def re_mstar_rel(lmstar, z):  # from Newman et al. 2012, z-dependent
-    return 10.**(0.38 + 0.57*(lmstar - 11.) -0.26*(z - 1.))
+    return 10.**(0.38 + 0.57*(lmstar - 11.) - 0.26*(z - 1.))
 
 
 def generate_reff(lmstar_sample, z):  # draws values of Re from the mass-radius relation of Newman et al. (2012)
@@ -80,8 +89,8 @@ def generate_veldisp_from_fp(lmstar_sample, reff_sample):
     return 10.**(1./a*(np.log10(reff_sample) + 2.5*b*(lmstar_sample - 2.*np.log10(reff_sample) - np.log10(2.*np.pi)) - c))
 
 
-def generate_veldisp_from_mstar(lmstar_sample):
-    return 10.**(np.log10(vdisp_mstar_rel_auger(lmstar_sample)) + np.random.normal(0., 0.04, len(np.atleast_1d(lmstar_sample))))
+def generate_veldisp_from_mstar(lmstar_sample, z):
+    return 10.**(np.log10(vdisp_mstar_rel_mason(lmstar_sample, z)) + np.random.normal(0., 0.04, len(np.atleast_1d(lmstar_sample))))
 
 
 def limf_func_cvd12(mstar, re, dt, coeff=(0.1, 0.3)):
@@ -94,14 +103,20 @@ def limf_func_rhoc(z_form, coeff=(0.3, 1.0)):
 
 
 def limf_func_mstar(lmstar, coeff=(3., 0.2)):
-    return (2./np.pi*np.arctan((lmstar - 11.2)*coeff[0]) + 0.8)*coeff[1]
+    #return (2./np.pi*np.arctan((lmstar - 11.2)*coeff[0]) + 0.8)*coeff[1]
+    return coeff[0]*(lmstar - 11.) + coeff[1]
 
 
-def satellite_imf(lmstar, recipe='SigmaSF', coeff=(0.1, 0.3)):
+def limf_func_vdisp(lvdisp, coeff=(3., 0.2)):
+    #return (2./np.pi*np.arctan((lvdisp - 2.3)*coeff[0]) + 0.8)*coeff[1]
+    return coeff[0]*(lvdisp - 2.3) + coeff[1]
+
+
+def satellite_imf(lmstar, z=2., recipe='SigmaSF', coeff=(0.1, 0.3)):
 
     if recipe == 'SigmaSF':
         dt_form = dt_form_mstar_func(lmstar)
-        re = re_mstar_rel(lmstar)
+        re = re_mstar_rel_z0(lmstar)
         return 10.**limf_func_cvd12(10.**lmstar, re, dt_form, coeff)
 
     elif recipe == 'density':
@@ -110,6 +125,9 @@ def satellite_imf(lmstar, recipe='SigmaSF', coeff=(0.1, 0.3)):
 
     elif recipe == 'mstar':
         return 10.**(limf_func_mstar(lmstar, coeff))
+
+    elif recipe == 'vdisp':
+        return 10.**(limf_func_vdisp(np.log10(vdisp_mstar_rel_mason(lmstar, z)), coeff))
 
     else:
         raise ValueError("recipe must be one between 'SigmaSF' and 'density'.")

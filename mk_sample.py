@@ -3,7 +3,6 @@ import pylab
 import shmrs
 import galaxies
 import recipes
-import sys
 import pickle
 import measurements
 
@@ -12,10 +11,12 @@ Ngal = 100   # sample size
 
 z_0 = 2.
 
-if len(sys.argv) > 1:
-    outname = sys.argv[1]
-else:
-    outname = 'output.dat'
+imf_recipe = 'mstar'
+imf_coeff = (0.5, 0.0)
+
+outname = '%s_dep_imf_coeff%3.1f_mergboost.dat'%(imf_recipe, imf_coeff[0])
+
+boost = 2.
 
 lmhalos = shmrs.generate_halos(10000, z=2.)
 lmstars = shmrs.generate_mstar(lmhalos, z=2., scat=0.18)
@@ -26,7 +27,7 @@ ind_sample = np.random.choice(indices[selection], Ngal)
 lmhalo_sample = lmhalos[ind_sample]
 lmstar_sample = lmstars[ind_sample]
 reff_sample = recipes.generate_reff(lmstar_sample, z_0)
-vdisp_sample = recipes.generate_veldisp_from_mstar(lmstar_sample)
+vdisp_sample = recipes.generate_veldisp_from_mstar(lmstar_sample, z_0)
 aimf_z2_sample = 0.*lmstar_sample
 
 centrals = []
@@ -35,7 +36,7 @@ for i in range(0, Ngal):
                            re_0=reff_sample[i], sigma_0=vdisp_sample[i])
 
     central.z_form = 2.
-    central.evolve(z_low=0., z_up = z_0, imf_recipe='mstar', imf_coeff=(3., 0.2))
+    central.evolve(z_low=0., z_up = z_0, imf_recipe=imf_recipe, imf_coeff=imf_coeff, merger_boost=boost)
 
     centrals.append(central)
     aimf_z2_sample[i] = central.aimf[-1]

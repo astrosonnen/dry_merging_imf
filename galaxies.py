@@ -67,7 +67,7 @@ class ETG:
             raise ValueError("sf_recipe must be one between 'sigma' and 'mstar'.")
 
 
-    def evolve(self, ximin=0.03, dz=0.01, z_low=0., z_up=2., imf_recipe='SigmaSF', imf_coeff=(0.1, 0.3)):
+    def evolve(self, ximin=0.03, dz=0.01, z_low=0., z_up=2., imf_recipe='SigmaSF', imf_coeff=(0.1, 0.3), merger_boost=1.):
 
         self.z = np.arange(z_low, z_up, dz)
 
@@ -101,42 +101,26 @@ class ETG:
             def rfunc(mhalo):
                 return 10.**(splev(np.log10(mhalo), lmhalo_spline) - np.log10(mhalo))
 
-            # calculates what is the minimum mass of galaxies that have already formed stars at this redshift.
-            lmstar_form = recipes.lmstar_zfunc(self.z[i])
-            ximh_min = shmrs.mhfunc(lmstar_form, self.z[i])
-            ximinmin = 10.**ximh_min/self.mhalo[i]
+            imz = quad(
+                lambda xi: rfunc(xi*self.mhalo[i])*xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
 
-            if ximinmin > ximin:
-                ximin_eff = ximinmin
-            else:
-                ximin_eff = ximin
+            self.dmstar_chab_dz[i] = -merger_boost*A*imz*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
 
-            if ximin_eff < 1:
-                imz = quad(
-                    lambda xi: rfunc(xi*self.mhalo[i])*xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin_eff, 1.)[0]
+            imtz = quad(
+                lambda xi: recipes.satellite_imf(
+                    np.log10(xi*self.mhalo[i]*rfunc(xi*self.mhalo[i])), imf_recipe, imf_coeff)* \
+                           rfunc(xi*self.mhalo[i])*xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
 
-                self.dmstar_chab_dz[i] = -A*imz*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
+            self.dmstar_true_dz[i] = -merger_boost*A*imtz*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
 
-                imtz = quad(
-                    lambda xi: recipes.satellite_imf(
-                        np.log10(xi*self.mhalo[i]*rfunc(xi*self.mhalo[i])), imf_recipe, imf_coeff)* \
-                               rfunc(xi*self.mhalo[i])*xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin_eff, 1.)[0]
+            ire = quad(lambda xi: (2.-np.log(1.+xi**(2.-betaR))/np.log(1.+xi))*rfunc(xi*self.mhalo[i])* \
+                           xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
 
-                self.dmstar_true_dz[i] = -A*imtz*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
+            isigma = quad(lambda xi: -0.5*(1. - np.log(1.+xi**(2.-betaR))/np.log(1.+xi))*rfunc(xi*self.mhalo[i])* \
+                           xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
 
-                ire = quad(lambda xi: (2.-np.log(1.+xi**(2.-betaR))/np.log(1.+xi))*rfunc(xi*self.mhalo[i])* \
-                               xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin_eff, 1.)[0]
-
-                isigma = quad(lambda xi: -0.5*(1. - np.log(1.+xi**(2.-betaR))/np.log(1.+xi))*rfunc(xi*self.mhalo[i])* \
-                               xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin_eff, 1.)[0]
-
-                self.mstardlnre_dz[i] = -A*ire*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
-                self.mstardlnsigma_dz[i] = -A*isigma*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
-
-            else:
-                pass
-                # no mergers at this z. Galaxies below this mass have not formed stars.
-                # but then our central galaxy shouldn't even exist!!
+            self.mstardlnre_dz[i] = -merger_boost*A*ire*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
+            self.mstardlnsigma_dz[i] = -merger_boost*A*isigma*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
 
         for i in range(i_0-1, -1, -1):
             self.mstar_chab[i] = self.mstar_chab[i+1] - 0.5*(self.dmstar_chab_dz[i] + self.dmstar_chab_dz[i+1])*dz
@@ -158,6 +142,8 @@ class ETG:
             self.imf_form = 10.**recipes.limf_func_rhoc(self.z_form, imf_coeff)
         elif imf_recipe == 'mstar':
             self.imf_form =10.**recipes.limf_func_mstar(np.log10(self.mstar_chab[i_form]), imf_coeff)
+        elif imf_recipe == 'vdisp':
+            self.imf_form =10.**recipes.limf_func_vdisp(np.log10(self.veldisp[i_form]), imf_coeff)
         else:
             raise ValueError("recipe must be one between 'SigmaSF' and 'density'.")
 
