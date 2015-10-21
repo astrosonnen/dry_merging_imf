@@ -11,12 +11,13 @@ Ngal = 100   # sample size
 
 z_0 = 2.
 
-imf_recipe = 'mstar'
-imf_coeff = (0.5, 0.0)
+imf_recipe = 'vdisp'
+#imf_coeff = (0.5, 0.0, 2.0, 0.0)
+imf_coeff = (2.0, 0.0)
 
-outname = '%s_dep_imf_coeff%3.1f_mergboost.dat'%(imf_recipe, imf_coeff[0])
+outname = '%s_dep_imf_coeff%3.1f.dat'%(imf_recipe, imf_coeff[0])
 
-boost = 2.
+boost = 1.
 
 lmhalos = shmrs.generate_halos(10000, z=2.)
 lmstars = shmrs.generate_mstar(lmhalos, z=2., scat=0.18)

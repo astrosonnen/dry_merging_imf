@@ -129,6 +129,9 @@ def satellite_imf(lmstar, z=2., recipe='SigmaSF', coeff=(0.1, 0.3)):
     elif recipe == 'vdisp':
         return 10.**(limf_func_vdisp(np.log10(vdisp_mstar_rel_mason(lmstar, z)), coeff))
 
+    elif recipe == 'mstar-vdisp':
+        return 10.**(limf_func_mstar(lmstar, (coeff[0], coeff[1])) + \
+                     limf_func_vdisp(np.log10(vdisp_mstar_rel_mason(lmstar, z)), (coeff[2], coeff[3])))
     else:
         raise ValueError("recipe must be one between 'SigmaSF' and 'density'.")
 
