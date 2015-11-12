@@ -117,37 +117,4 @@ def do_fits(filename):
 
     return output
 
-mstar_fits = do_fits('mstar_dep_imf_coeff0.5.dat')
-vdisp_fits = do_fits('vdisp_dep_imf_coeff2.0.dat')
-both_fits = do_fits('mstar-vdisp_dep_imf_coeff0.52.0.dat')
-
-mstar_model_z2 = (mstar_fits['z=2']['mstar-sigma'][0][1], mstar_fits['z=2']['mstar-sigma'][0][2])
-vdisp_model_z2 = (vdisp_fits['z=2']['mstar-sigma'][0][1], vdisp_fits['z=2']['mstar-sigma'][0][2])
-both_model_z2 = (both_fits['z=2']['mstar-sigma'][0][1], both_fits['z=2']['mstar-sigma'][0][2])
-
-mstar_model_z1 = (mstar_fits['z=1']['mstar-sigma'][0][1], mstar_fits['z=1']['mstar-sigma'][0][2])
-vdisp_model_z1 = (vdisp_fits['z=1']['mstar-sigma'][0][1], vdisp_fits['z=1']['mstar-sigma'][0][2])
-both_model_z1 = (both_fits['z=1']['mstar-sigma'][0][1], both_fits['z=1']['mstar-sigma'][0][2])
-
-mstar_model_z0 = (mstar_fits['z=0']['mstar-sigma'][0][1], mstar_fits['z=0']['mstar-sigma'][0][2])
-vdisp_model_z0 = (vdisp_fits['z=0']['mstar-sigma'][0][1], vdisp_fits['z=0']['mstar-sigma'][0][2])
-both_model_z0 = (both_fits['z=0']['mstar-sigma'][0][1], both_fits['z=0']['mstar-sigma'][0][2])
-
-pylab.scatter(mstar_model_z2[0], mstar_model_z2[1], color='r', s=40, label='$M_*$ model, $z=2$')
-pylab.scatter(vdisp_model_z2[0], vdisp_model_z2[1], s=40, label='$\sigma$ model, $z=2$')
-pylab.scatter(both_model_z2[0], both_model_z2[1], color='g', s=40, label='$M_*-\sigma$ model, $z=2$')
-
-pylab.scatter(mstar_model_z1[0], mstar_model_z1[1], color='r', s=40, label='$M_*$ model, $z=1$', marker='s')
-pylab.scatter(vdisp_model_z1[0], vdisp_model_z1[1], s=40, label='$\sigma$ model, $z=1$', marker='s')
-pylab.scatter(both_model_z1[0], both_model_z1[1], color='g', s=40, label='$M_*-\sigma$ model, $z=1$', marker='s')
-
-pylab.scatter(mstar_model_z0[0], mstar_model_z0[1], color='r', s=40, label='$M_*$ model, $z=0$', marker='^')
-pylab.scatter(vdisp_model_z0[0], vdisp_model_z0[1], s=40, label='$\sigma$ model, $z=0$', marker='^')
-pylab.scatter(both_model_z0[0], both_model_z0[1], color='g', s=40, label='$M_*-\sigma$ model, $z=0$', marker='^')
-#pylab.legend(scatterpoints=1)
-pylab.xlabel('$\partial \log{\\alpha_{\mathrm{IMF}}} / \partial \log{M_*}$', fontsize=16)
-pylab.ylabel('$\partial \log{\\alpha_{\mathrm{IMF}}} / \partial \log{\sigma}$', fontsize=16)
-pylab.savefig('dep_evolution_plot.png')
-pylab.show()
-
 

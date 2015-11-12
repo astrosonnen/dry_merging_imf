@@ -11,11 +11,12 @@ Ngal = 100   # sample size
 
 z_0 = 2.
 
-imf_recipe = 'vdisp'
-#imf_coeff = (0.5, 0.0, 2.0, 0.0)
-imf_coeff = (2.0, 0.0)
+imf_recipe = 'mstar-vdisp'
+imf_coeff = (0.3, 0.0, 1.5, 0.0)
+#imf_coeff = (2.0, 0.0)
 
-outname = '%s_dep_imf_coeff%3.1f.dat'%(imf_recipe, imf_coeff[0])
+#outname = '%s_dep_imf_coeff%3.1f.dat'%(imf_recipe, imf_coeff[0])
+outname = '%s_dep_imf_coeff%3.1f%3.1f.dat'%(imf_recipe, imf_coeff[0], imf_coeff[2])
 
 boost = 1.
 

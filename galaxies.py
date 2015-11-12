@@ -108,7 +108,7 @@ class ETG:
 
             imtz = quad(
                 lambda xi: recipes.satellite_imf(
-                    np.log10(xi*self.mhalo[i]*rfunc(xi*self.mhalo[i])), z=self.z[i], recipe=imf_recipe, coeff=imf_coeff)* \
+                    np.log10(xi*self.mhalo[i]*rfunc(xi*self.mhalo[i])), z=self.z_0, recipe=imf_recipe, coeff=imf_coeff)* \
                            rfunc(xi*self.mhalo[i])*xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
 
             self.dmstar_true_dz[i] = -merger_boost*A*imtz*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
