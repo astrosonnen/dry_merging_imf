@@ -1,34 +1,24 @@
 %===============================================================================
-%
-%
-%===============================================================================
-\documentclass{emulateapj}
 
-\usepackage{natbib}
+
+%===============================================================================
+%\documentclass[usenatbib, usegraphicx, letters]{mnras}
+\documentclass[usenatbib, letters]{mnras}
+
+%\usepackage{natbib}
+\usepackage{graphicx}
 \usepackage{hyperref}
-\usepackage{color}
+%\usepackage{color}
 %\usepackage{lscape}
 %\usepackage{subfig}
-\citestyle{aa}
+%\citestyle{aa}
 \usepackage{xspace}
 % \usepackage{epsfig}
 % \usepackage{amssymb}
 % \usepackage{amsmath}
 % \submitted{draft}
-
 %\input{macros.tex}
-
 \newcommand{\boldsymbol}[1]{\mbox{\boldmath{${#1}$}}}
-
-\shorttitle{On how dry merges affect the stellar IMF of massive galaxies}
-\shortauthors{Sonnenfeld, Nipoti \& Treu}
-
-\def\ucsb{1}
-\def\bologna{2}
-\def\kipac{3}
-\def\asiaa{4}
-\def\oxford{5}
-\def\iap{6}
 
 \def\gammadm{\gamma_{\mathrm{DM}}}
 \def\mdm{M_{\mathrm{DM}}}
@@ -46,50 +36,42 @@
 \def\Fref#1{Figure~\ref{#1}\xspace}
 \def\Tref#1{Table~\ref{#1}\xspace}
 \def\Eref#1{Equation~\ref{#1}\xspace}
-
-%\newcommand{\QUERY}[2]{{\it \textcolor{red}{Q: #1: #2}}}
-
-\addtolength\topmargin{1cm}
+%\addtolength\topmargin{1cm}
 
 %===============================================================================
-
 
 \begin{document}
 
 \title{On how dry merges affect the effective stellar IMF of massive galaxies}
-\author{Alessandro~Sonnenfeld\altaffilmark{\ucsb}$^{*}$}
-\author{Carlo~Nipoti\altaffilmark{\bologna}}
-\author{Tommaso~Treu\altaffilmark{\ucsb}$^{\dag}$}
-
-% Auger, Sonnenfeld, Treu, Suyu:
-\altaffiltext{\ucsb}{Physics Department, University of California, Santa Barbara, CA 93106, USA} 
-% Gavazzi, Brault:
-\altaffiltext{\bologna}{
-Department of Physics and Astronomy, Bologna University, viale Berti-Pichat 6/2, 40127 Bologna, Italy}
-
-\altaffiltext{*}{{\tt sonnen@astro.ucla.edu}}
-\altaffiltext{$\dag$}{{Packard Research Fellow}}
-
-
-%-------------------------------------------------------------------------------
-
-\begin{abstract}
-
-\end{abstract}
-
-\keywords{%
-   galaxies: elliptical and lenticular, cD --- galaxies: evolution
+\author[Sonnenfeld et al.]{
+Alessandro~Sonnenfeld,$^{1,2}$\thanks{E-mail:alessandro.sonnenfeld@ipmu.jp}
+Carlo~Nipoti,$^{3}$
+and Tommaso~Treu$^{2}$
+\\
+%$^{1}$Kavli Institute for the Physics and Mathematics of the Universe (WPI),The University of Tokyo Institutes for Advanced Study, The University of Tokyo, Kashiwa, Chiba 277-8583, Japan \\
+$^{1}$Kavli IPMU (WPI), UTIAS, The University of Tokyo, Kashiwa, Chiba 277-8583, Japan \\
+$^{2}$Department of Physics and Astronomy, University of California, Los Angeles, 430 Portola Plaza, Los Angeles, CA 90025, USA \\
+$^{3}$Department of Physics and Astronomy, Bologna University, viale Berti-Pichat 6/2, 40127 Bologna, Italy
 }
 
-%-------------------------------------------------------------------------------
+\maketitle
 
+%-------------------------------------------------------------------------------
+\begin{abstract}
+Abstract.
+\end{abstract}
+
+\begin{keywords}
+   galaxies: elliptical and lenticular, cD -- galaxies: evolution
+\end{keywords}
+
+%-------------------------------------------------------------------------------
 \section{Introduction}\label{sect:intro}
 
-Observations of massive early-type galaxies at $z\sim0$ show a trend of stellar IMF with galaxy mass, with the most massive systems having on average a heavier IMF \citep{Tre++10b,Cap++12}.
+Observations of massive early-type galaxies at $z\sim0$ show a trend of stellar IMF with galaxy mass, with the most massive systems having on average a heavier IMF \citep{Tre++10,Cap++12}.
 Efforts have been put into reproducing from a theoretical standpoint the observed IMF trends. However, despite recent progress, we still lack a coherent description of star formation across all environments.
 The variation in the IMF might be the result of different conditions in the star-forming gas in different galaxies \citep{Hop13}.
 One complication in comparing measurements of the IMF with models is that present day stellar populations are ensembles of stars formed a different epochs in a range of environments.
-%Massive ETGs have typically old stellar populations, indicating a relatively early formation time for these objects. 
 For massive early-type gaalxies, a significant fraction of their present day stellar mass is believed to be accreted from other systems \citep{vDo++10}.
 If the IMF is not universal, then each accreted object will in general have a different IMF from the preexisting population of the central galaxy.
 The IMF of a massive galaxy at $z=0$ will then be combination of the IMF of the stellar population formed in-situ and that of the accreted galaxies.
@@ -117,93 +99,84 @@ We then introduce an {\em IMF mismatch parameter}
 Stellar populations with a more bottom-heavy IMF than a Chabrier IMF will have $\alpha>1$. A Salpeter IMF for example corresponds tipically to a value $\aimf\approx1.8$.
 As defined above, $\aimf$ is a well-defined quantity also for galaxies that do not have a homogeneous stellar population, for example as a result of mergers.
 
-In addition to the stellar mass of a galaxy, we define the time of its initial star formation, $t_f$. 
-Finally, we also consider the halo mass of each galaxy, $\mhalo$.
-Stellar mass, halo mass and formation time are the only quantities that enter our model.
+In addition to the stellar mass of a galaxy, we track its halo mass $\mhalo$ and its central velocity dispersion $\sigma$.
+Stellar mass, halo mass and stellar velocity dispersion are the only quantities that enter our model.
 
 
 \subsection{The mock sample}
 
-We generate a sample of galaxies zt $z=0$ by drawing Chabrier stellar masses from a Gaussian distribution in $\log{\mchab}$ with mean $\mu=11.2$ and dispersion $\sigma=0.3$.
-We then assign halo masses with the prescription of \citet{Nip++12}, assuming a stellar to halo mass relation (SHMR) from \citet{Lea++12}: for a given galaxy stellar mass $\mchab$ we calculate $P(\mhalo|\mchab)$ and take the average over $\log{\mhalo}$ as the galaxy halo mass.
-The true stellar mass $\mtrue$ is initially unassigned.
-
-
-\subsection{The star formation time}
-
-In order to have a well-defined formation time, we assume that the in-situ star formation history of our galaxies consists of a burst of short duration compared to the age of the Universe.
-There is a well-known correlation between the age of a galaxy and its mass \citep[e.g.]{Tho++05}.
-We assign a formation time to each galaxy following the relation between stellar mass and formation age fitted by \citet{Tho++05} for galaxies in high-density environments:
-\begin{equation}\label{eq:tform}
-\log{t/\mathrm{Gyr}} = 0.427 + 0.053\log{\mchab/M_\odot}.
+We generate a sample of halo masses drawn from the halo mass function described by \citet{Tin++08}.
+We then assign a Chabrier stellar mass to each halo using a stellar to halo mass relation (SHMR) from \citet{Lea++12}, including scatter.
+We make a cut in stellar mass keeping only galaxies with $\log{\mchab} > 10.8$ and then select a random sample of 100 objects.
+Finally we assign central velocity dispersions using the $M_*-\sigma$ relation measured by \citet{Aug++10} for low-z objects, generalized to higher redshifts ($z \sim 2$) following \citet{Mas++15}:
+\begin{equation}\label{eq:mason}
+\log{\sigma} = 2.34 + 0.18(\log{\mchab} - 11) + 0.20\log{(1 + z)}.
 \end{equation}
-We neglect scatter.
 
 
 
-\subsection{The IMF at formation}
+\subsection{The IMF}
 \label{ssect:imfform}
 
-For a newly born population of stars, we assume that its stellar IMF scales with the density of the star-forming gas.
-We use the critical density of the Universe $\rhoc$ as a proxy for the gas density.
-The motivation for that is........
-
-We parametrize the IMF of a coeval stellar population formed at time $t_f$ as follows:
-\begin{equation}\label{eq:aimf_form}
-\log{\aimf} = \loga0 + \beta(\rhoc(t_f) + 28),
+The IMF of massive galaxies has been shown to correlate with stellar velocity dispersion \citep[e.g.]{Tre++10, CvD12, LaB++13, Spi++14, Pos++15}, stellar mass \citep{Aug++10b, Son++15}, mass-to-light ratio \citep{Cap++12} and stellar mass density \citep{Spi++15}.
+In light of these observations, we adopt the following two prescriptions for assigning the IMF of our galaxies.
+In the first prescription, labeled ``$M_*$ model'', we assume the following linear relation between IMF mismatch parameter and stellar mass:
+\begin{equation}\label{eq:mstarmodel}
+\log{\aimf} = a_*(\log{\mchab} - 11) + b_*,
 \end{equation}
-where $\rho$ is measured in g~cm$^{-3}$, and $\loga0$ and $\beta$ are two free parameters of the model.
+with $a_* = 0.5$ and $b_* = 0.0$. %These values have been chosen to match the measurements by \citet{Aug++10b} and \citet{Son++15} at low redshift ($z\sim 0.2-0.3$).
+The second prescription, labeled ``$\sigma$ model'', consists in a linear relation between stellar velocity dispersion and IMF mismatch parameter:
+\begin{equation}\label{eq:sigmamodel}
+\log{\aimf} = a_\sigma(\log{\sigma} - 2.3) + b_\sigma,
+\end{equation}
+with $a_\sigma = 2.0$ and $b_\sigma = 0.0$.
+These prescriptions are purely empirically motivated.
+While there have been attempts at predicting the stellar IMF from first principles in terms of the global properties of a galaxy \citep[e.g.]{Kru11,Hop12}, implementing such models would require us to make additional assumptions on parameters of the star forming gas such as the pressure and the turbulence Mach number.
+Given the current uncertainty on the true mechanism determining the IMF, the benefits of employing such theoretically motivated recipes are modest and we therefore limit our model to simpler empirical recipes.
+We show that the main results of this study hold for a range of different prescriptions for assigning the IMF.
+
+
 
 
 \subsection{The dry merger evolution}
 
-Our central galaxies are evolved back in time using the model developed by \citet{Nip++12}.
-The change in mass of each galaxy due to mergers is calculated by marginalizing over mergers with galaxies of all possible masses.
-Merger rates are taken from an analysis of the Millennium simulation and is expressed in term of halo masses of the central and satellite galaxies.
-The Chabrier stellar masses of the satellite galaxies are assigned using the same SHMR, evaluated at the redshift of the merger.
-An important distinction we make between central galaxies and satellites is that {\em the stellar mass of a satellite is assumed to stay constant from the time of its formation}.
-We then use \Eref{eq:tform} to define the formation time of the satellite. Even though \Eref{eq:tform} was calibrated at $z=0$, under the above assumption there is no difference between satellite stellar masses at $z=0$ and their value at any other time since their formation.
-We use \Eref{eq:aimf_form} to calculate the IMF at formation of each satellite.
-This, together with the assumption of stellar mass constant in time, allows us to calculate the true stellar mass of each satellite, using the definition of $\aimf$ \Eref{eq:aimf}.
+Our central galaxies are evolved to $z=0$ using the dry merger evolution model developed by \citet{Nip++12}.
+The method can be summarized as follows.
+For each central galaxy we first compute the evolution in its halo mass due to mergers.
+This is done by averaging over contributions from mergers with halo mass ratios $0.03 < \xi < 1$, with rates informed from the Millennium simulation.
+The halo mass derived at each timestep is therefore that of a halo with an average merger history.
+We then calculate the growth in Chabrier stellar mass assuming that each merged halo is associated with a stellar mass given by the (redshift dependent) SHMR of \citet{Lea++12}, and that this stellar mass is also accreted by the central galaxy.
+In order to calculate the change in the true stellar mass, we need to define the IMF of the satellite galaxies. We assign the IMF to satellites using the same recipe used for the central. For the ``$M_*$ model'' the quantity determining the IMF is the stellar mass of the satellite. For the ``$\sigma$ model'' instead we need to specify the velocity dispersion of the satellite. In that case we use \Eref{eq:mason} to assign a velocity dispersion to the satellite and then use it to calculate the IMF.
+This procedure is not entirely self-consistent, since our recipes are intended to describe the IMF at $z=2$ while mergers can occur at any redshift. In principle, satellites themselves can merge between $z=2$ and the time they are accreted, resulting in a change in their IMF. This however is a higher order effect that would only marginally distort the relations between satellite parameters and IMF. 
+Finally, we calculate the change in central velocity dispersion due to mergers with an analytical expression calibrated on high resolution N-body simulations of collisonless mergres (Eq. 30 of \citet{Nip++12}). 
+With this description, dry mergers tend to decrease the central velocity dispersion, the effect being larger in minor mergers than in major mergers for the same amount of accreted stellar mass.
 
-With each merger we can then calculate both the change in Chabrier stellar mass and in true stellar mass of the central galaxy (even though the true stellar mass of the central is still undefined).
-
-We evolve our central galaxies back until their formation time.
-We then calculate the IMF of their initial stellar population and use it to calculate their initial true stellar mass, which we then use to calculate $\mtrue$, and $\aimf$, at all redshifts down to $z=0$.
-
+Note that we do not keep track of the spatial distribution of stars within our galaxies. Although observations could in principle detect spatial variations in IMF within a galaxy and put interesting constraints on IMF differences between the in-situ population and that of the accreted stars, that is beyond the scope of this work.
 
 \section{Results}\label{sect:results}
 
-In \Fref{fig:mstarz} we plot the Chabrier stellar mass and true stellar mass as a function of redshift for a mock sample of 10 galaxies.
-
-\begin{figure}
-\includegraphics[width=\columnwidth]{figs/mstar_vs_z.eps}
-\caption{\label{fig:mstarz}  True stellar mass and "Chabrier" stellar mass as a function of redshift.}
-\end{figure}
-
-In \Fref{fig:aimfm} we plot the IMF normalization of our sample at both the redshift of formation and at $z=0$.
+In \Fref{fig:snap} we plot the IMF mismatch parameter for our mock sample of galaxies at three different redshifts ($z=2$, $z=1$ and $z=0$), as a function of stellar mass and velocity dispersion.
 The trend of $\aimf$ with stellar mass, which we assumed in place at the formation, is mostly preserved by dry mergers down to $z=0$, but is less steep.
-
-
+%
 \begin{figure}
-\includegraphics[width=\columnwidth]{figs/aimf_vs_mstar.eps}
-\caption{\label{fig:aimfm}  {\bf The money plot.} IMF normalization as a function of redshift at both the formation time and $z=0$.}
+ \includegraphics[width=\textwidth]{snapshots.eps}
+ \caption{ Blabla.}
+ \label{fig:snap}
 \end{figure}
 
 
+%\section{Discussion}\label{sect:discuss} 
 
-\section{Discussion}\label{sect:discuss} 
+%\subsection{Consistency checks}
 
-\subsection{Consistency checks}
-
-\subsection{Caveats}
-There's no scatter.
-We ignore progenitor bias.
+%\subsection{Caveats}
+%There's no scatter.
+%We ignore progenitor bias.
 
 
 \section{Conclusions}\label{sect:concl} 
 
-\acknowledgments
+\section*{acknowledgments}
 %-------------------------------------------------------------------------------
 
 %\acknowledgments
@@ -213,7 +186,7 @@ We ignore progenitor bias.
 
 %-------------------------------------------------------------------------------
 
-\bibliographystyle{apj}
+\bibliographystyle{mnras}
 \bibliography{references}
 %-------------------------------------------------------------------------------
 
