@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.optimize import leastsq
+from scipy.optimize import leastsq, minimize
 import pickle
 import sys
 import pylab
@@ -21,7 +21,7 @@ def fit_mstar_re_fixed_z(lmstar_sample, lreff_sample, aimf_sample, guess=(0.3, 0
     return par, scat
 
 
-def fit_mhalo_z0(lmstar_sample, lreff_sample, lmhalo_sample, guess=(13., 0.3, 0.3)):
+def fit_mhalo(lmstar_sample, lreff_sample, lmhalo_sample, guess=(13., 0.3, 0.3)):
 
     def modelfunc(p):
         return p[0] + p[1]*(lmstar_sample - 11.5) + p[2]*(lreff_sample - np.log10(5.))
@@ -47,6 +47,22 @@ def fit_mstar_sigma_fixed_z(lmstar_sample, lsigma_sample, aimf_sample, guess=(0.
     scat = (sum(errfunc(par)**2)/float(len(aimf_sample)))**0.5
 
     return par, scat
+
+
+def mlfit_mstar_sigma(lmstar_sample, lsigma_sample, aimf_sample, guess=(0.3, 0.3, 0., 0.1)):
+
+    def modelfunc(p):
+        return p[0] + p[1]*(lmstar_sample - 11.5) + p[2]*(lsigma_sample - np.log10(200.))
+
+    def errfunc(p):
+        return modelfunc(p) - aimf_sample
+
+    def logp(p):
+	return -(-0.5*errfunc(p)**2/p[3]**2 - np.log(p[3])).sum()
+
+    res = minimize(logp, guess, bounds=((-1.,1.), (-3., 3.), (-3., 3.), (0., 2.)))
+
+    return res.x
 
 
 def fit_sigma_only(lsigma_sample, aimf_sample, guess=(1.3, 0.)):
