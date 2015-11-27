@@ -6,13 +6,17 @@ from matplotlib import rc
 rc('text', usetex=True)
 
 
-f = open('mstar_dep_imf_coeff0.5.dat', 'r')
+#f = open('noscatter_mstar_dep_imf_coeff0.5.dat', 'r')
+#f = open('mstar_dep_imf_coeff0.5.dat', 'r')
+f = open('mstar-wscatter_dep_imf_coeff0.5.dat', 'r')
 ms_galaxies = pickle.load(f)
 f.close()
 
 ngal = 100
 
-f = open('vdisp_dep_imf_coeff2.0.dat', 'r')
+#f = open('vdisp_dep_imf_coeff2.0.dat', 'r')
+#f = open('mhalo_dep_imf_coeff0.3.dat', 'r')
+f = open('mstar-vdisp_dep_imf_coeff-0.31.5.dat', 'r')
 vd_galaxies = pickle.load(f)
 f.close()
 

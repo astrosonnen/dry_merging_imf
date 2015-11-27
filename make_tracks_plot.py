@@ -6,7 +6,7 @@ from matplotlib import rc
 rc('text', usetex=True)
 
 
-snaps = [0, 100, 199]
+snaps = [199, 100, 0]
 markers = ['s', '^', 'o']
 labels = ['$z=2$', '$z=1$', '$z=0$']
 colors = ['b', 'g', 'r']
@@ -79,7 +79,10 @@ for i in range(0, nsnap):
     pylab.scatter(mspar[snaps[i]], vdpar[snaps[i]], color=colors[i], marker=markers[i], s=msize)
 
 
-f = open('mstar-vdisp_dep_imf_coeff0.31.5.dat', 'r')
+#f = open('mstar-vdisp_dep_imf_coeff0.31.5.dat', 'r')
+f = open('mstar-vdisp_dep_imf_coeff-0.31.5.dat', 'r')
+#f = open('mhalo_dep_imf_coeff0.3.dat', 'r')
+#f = open('mstar-wscatter_dep_imf_coeff0.5.dat', 'r')
 galaxies = pickle.load(f)
 f.close()
 
@@ -121,7 +124,7 @@ yticks[0].label1.set_visible(False)
 yticks[-1].label1.set_visible(False)
 pylab.text(-0.05, 2.1, '$\sigma$ model', fontsize=16)
 pylab.text(0.45, 0.3, '$M_*$ model', fontsize=16)
-pylab.text(0.25, 1.7, 'Mixed model', fontsize=16)
+pylab.text(0.25, 1.7, '$M_H$ model', fontsize=16)
 
 pylab.legend(scatterpoints=1, loc='upper right')
 pylab.savefig('tracks.eps')

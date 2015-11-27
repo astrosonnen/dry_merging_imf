@@ -108,7 +108,7 @@ class ETG:
 
             imtz = quad(
                 lambda xi: recipes.satellite_imf(
-                    np.log10(xi*self.mhalo[i]*rfunc(xi*self.mhalo[i])), z=self.z_0, recipe=imf_recipe, coeff=imf_coeff)* \
+                    np.log10(xi*self.mhalo[i]*rfunc(xi*self.mhalo[i])), z=self.z_0, recipe=imf_recipe, coeff=imf_coeff, lmhalo=np.log10(xi*self.mhalo[i]))* \
                            rfunc(xi*self.mhalo[i])*xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
 
             self.dmstar_true_dz[i] = -merger_boost*A*imtz*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
@@ -147,6 +147,10 @@ class ETG:
         elif imf_recipe == 'mstar-vdisp':
             self.imf_form = 10.**(recipes.limf_func_mstar(np.log10(self.mstar_chab[i_form]), (imf_coeff[0], imf_coeff[1])) + \
                                   recipes.limf_func_vdisp(np.log10(self.veldisp[i_form]), (imf_coeff[2], imf_coeff[3])))
+        elif imf_recipe == 'mhalo':
+            self.imf_form = 10.**recipes.limf_func_mhalo(np.log10(self.mhalo[i_form]), imf_coeff)
+        elif imf_recipe == 'mstar-wscatter':
+            self.imf_form = 10.**(recipes.limf_func_mstar(np.log10(self.mstar_chab[i_form]), imf_coeff) + np.random.normal(0., 0.1, 1))
         else:
             raise ValueError("recipe must be one between 'SigmaSF' and 'density'.")
 

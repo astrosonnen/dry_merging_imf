@@ -112,7 +112,12 @@ def limf_func_vdisp(lvdisp, coeff=(3., 0.2)):
     return coeff[0]*(lvdisp - 2.3) + coeff[1]
 
 
-def satellite_imf(lmstar, z=2., recipe='SigmaSF', coeff=(0.1, 0.3)):
+def limf_func_mhalo(lmhalo, coeff=(0.3, 0.0)):
+    #return (2./np.pi*np.arctan((lmstar - 11.2)*coeff[0]) + 0.8)*coeff[1]
+    return coeff[0]*(lmhalo - 12.) + coeff[1]
+
+
+def satellite_imf(lmstar, z=2., recipe='SigmaSF', coeff=(0.1, 0.3), lmhalo=None):
 
     if recipe == 'SigmaSF':
         dt_form = dt_form_mstar_func(lmstar)
@@ -123,7 +128,7 @@ def satellite_imf(lmstar, z=2., recipe='SigmaSF', coeff=(0.1, 0.3)):
         z_form = z_form_mstar_func(lmstar)
         return 10.**limf_func_rhoc(z_form, coeff)
 
-    elif recipe == 'mstar':
+    elif recipe == 'mstar' or recipe == 'mstar-wscatter':
         return 10.**(limf_func_mstar(lmstar, coeff))
 
     elif recipe == 'vdisp':
@@ -132,6 +137,10 @@ def satellite_imf(lmstar, z=2., recipe='SigmaSF', coeff=(0.1, 0.3)):
     elif recipe == 'mstar-vdisp':
         return 10.**(limf_func_mstar(lmstar, (coeff[0], coeff[1])) + \
                      limf_func_vdisp(np.log10(vdisp_mstar_rel_mason(lmstar, z)), (coeff[2], coeff[3])))
+
+    elif recipe == 'mhalo':
+        return 10.**(limf_func_mhalo(lmhalo, coeff))
+
     else:
         raise ValueError("recipe must be one between 'SigmaSF' and 'density'.")
 
