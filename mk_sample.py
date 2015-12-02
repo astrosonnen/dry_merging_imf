@@ -11,27 +11,30 @@ Ngal = 100   # sample size
 
 z_0 = 2.
 
+#imf_recipe = 'mstar'
 #imf_recipe = 'mstar-wscatter'
 #imf_recipe = 'mhalo'
-imf_recipe = 'mstar-vdisp'
-imf_coeff = (-0.3, 0.0, 1.5, 0.0)
-#imf_coeff = (2.0, 0.0)
+#imf_recipe = 'mstar-vdisp'
+imf_recipe = 'vdisp'
+#imf_coeff = (0.3, 0.0, 1.5, 0.0)
+imf_coeff = (2.3, -0.35)
 #imf_coeff = (0.3, 0.0)
-#imf_coeff = (0.5, 0.0)
+#imf_coeff = (0.33, 0.07)
 
-#outname = '%s_dep_imf_coeff%3.1f.dat'%(imf_recipe, imf_coeff[0])
-outname = '%s_dep_imf_coeff%3.1f%3.1f.dat'%(imf_recipe, imf_coeff[0], imf_coeff[2])
+outname = '%s_dep_imf_coeff%3.1f.dat'%(imf_recipe, imf_coeff[0])
+#outname = '%s_dep_imf_coeff%3.1f%3.1f.dat'%(imf_recipe, imf_coeff[0], imf_coeff[2])
 
 boost = 1.
 
-lmhalos = shmrs.generate_halos(10000, z=2.)
+lmhalos = shmrs.generate_halos(10000, z=2., lmhmax=13.5)
 lmstars = shmrs.generate_mstar(lmhalos, z=2., scat=0.18)
-selection = lmstars > 10.8
+selection = lmstars > 10.5
 indices = np.arange(10000)
 ind_sample = np.random.choice(indices[selection], Ngal)
 
 lmhalo_sample = lmhalos[ind_sample]
 lmstar_sample = lmstars[ind_sample]
+print len(lmstar_sample[lmstar_sample>12])
 reff_sample = recipes.generate_reff(lmstar_sample, z_0)
 vdisp_sample = recipes.generate_veldisp_from_mstar(lmstar_sample, z_0)
 aimf_z2_sample = 0.*lmstar_sample
