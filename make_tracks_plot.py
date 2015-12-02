@@ -15,7 +15,8 @@ nsnap = len(snaps)
 msize=50
 
 # does the fit at each timestep, to follow the time evolution on the scaling relations in better detail
-f = open('mstar_dep_imf_coeff0.5.dat', 'r')
+f = open('mstar_dep_imf_coeff0.3.dat', 'r')
+#f = open('mstar_dep_imf_coeff0.5_mhmax13.dat', 'r')
 galaxies = pickle.load(f)
 f.close()
 
@@ -49,7 +50,8 @@ for i in range(0, nsnap):
 
 
 
-f = open('vdisp_dep_imf_coeff2.0.dat', 'r')
+f = open('vdisp_dep_imf_coeff2.3.dat', 'r')
+#f = open('vdisp_dep_imf_coeff2.0_mhmax13.dat', 'r')
 galaxies = pickle.load(f)
 f.close()
 
@@ -79,8 +81,8 @@ for i in range(0, nsnap):
     pylab.scatter(mspar[snaps[i]], vdpar[snaps[i]], color=colors[i], marker=markers[i], s=msize)
 
 
-#f = open('mstar-vdisp_dep_imf_coeff0.31.5.dat', 'r')
-f = open('mstar-vdisp_dep_imf_coeff-0.31.5.dat', 'r')
+f = open('mstar-vdisp_dep_imf_coeff0.31.5.dat', 'r')
+#f = open('mstar-vdisp_dep_imf_coeff-0.31.5.dat', 'r')
 #f = open('mhalo_dep_imf_coeff0.3.dat', 'r')
 #f = open('mstar-wscatter_dep_imf_coeff0.5.dat', 'r')
 galaxies = pickle.load(f)
