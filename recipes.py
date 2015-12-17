@@ -141,6 +141,14 @@ def satellite_imf(lmstar, z=2., recipe='SigmaSF', coeff=(0.1, 0.3), lmhalo=None)
     elif recipe == 'mhalo':
         return 10.**(limf_func_mhalo(lmhalo, coeff))
 
+    elif recipe == 'mstar-flat':
+	lm = np.atleast_1d(lmstar)
+	out = 0.*lm
+	out[lm>10.5] = 10.**(limf_func_mstar(lmstar, coeff))
+	out[lm<=10.5] = 10.**(limf_func_mstar(10.5, coeff))
+	return out
+
+
     else:
         raise ValueError("recipe must be one between 'SigmaSF' and 'density'.")
 

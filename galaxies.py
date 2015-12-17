@@ -52,6 +52,8 @@ class ETG:
         self.z_snap = None
         self.mstar_chab_snap = None
         self.aimf = None
+	self.xieff = None
+	self.rfuncatxieff = None
 
     def get_sf_history(self, sf_recipe='veldisp'):
 
@@ -93,6 +95,9 @@ class ETG:
 
         self.ire = 0.*self.z
 
+	self.xieff = 0.*self.z
+	self.rfuncatxieff = 0.*self.z
+
         for i in range(0, nz):
 
             lmhalo_grid = shmrs.mhfunc(lmstar_grid, self.z[i])
@@ -103,6 +108,10 @@ class ETG:
 
             imz = quad(
                 lambda xi: rfunc(xi*self.mhalo[i])*xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
+            imxiz = quad(
+                lambda xi: rfunc(xi*self.mhalo[i])*xi**(beta+2.)*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
+	    self.xieff[i] = imxiz/imz
+	    self.rfuncatxieff[i] = rfunc(self.xieff[i]*self.mhalo[i])
 
             self.dmstar_chab_dz[i] = -merger_boost*A*imz*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
 
@@ -140,7 +149,7 @@ class ETG:
             self.imf_form = 10.**recipes.limf_func_cvd12(self.mstar_chab[i_form], self.re[i_form], self.dt_form, imf_coeff)
         elif imf_recipe == 'density':
             self.imf_form = 10.**recipes.limf_func_rhoc(self.z_form, imf_coeff)
-        elif imf_recipe == 'mstar':
+        elif imf_recipe == 'mstar' or imf_recipe=='mstar-flat':
             self.imf_form = 10.**recipes.limf_func_mstar(np.log10(self.mstar_chab[i_form]), imf_coeff)
         elif imf_recipe == 'vdisp':
             self.imf_form = 10.**recipes.limf_func_vdisp(np.log10(self.veldisp[i_form]), imf_coeff)

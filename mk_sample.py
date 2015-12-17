@@ -12,17 +12,18 @@ Ngal = 100   # sample size
 z_0 = 2.
 
 #imf_recipe = 'mstar'
+#imf_recipe = 'mstar-flat'
 #imf_recipe = 'mstar-wscatter'
 #imf_recipe = 'mhalo'
 #imf_recipe = 'mstar-vdisp'
-imf_recipe = 'vdisp'
-#imf_coeff = (0.3, 0.0, 1.5, 0.0)
-imf_coeff = (2.3, -0.35)
+#imf_recipe = 'vdisp'
+#imf_coeff = (0.2, -0.1, 1.5, 0.0)
+#imf_coeff = (2.3, -0.35)
 #imf_coeff = (0.3, 0.0)
-#imf_coeff = (0.33, 0.07)
+imf_coeff = (0.33, 0.07)
 
-outname = '%s_dep_imf_coeff%3.1f.dat'%(imf_recipe, imf_coeff[0])
-#outname = '%s_dep_imf_coeff%3.1f%3.1f.dat'%(imf_recipe, imf_coeff[0], imf_coeff[2])
+outname = '%s_dep_imf_coeff%4.2f.dat'%(imf_recipe, imf_coeff[0])
+#outname = '%s_dep_imf_coeff%4.2f%4.2f.dat'%(imf_recipe, imf_coeff[0], imf_coeff[2])
 
 boost = 1.
 

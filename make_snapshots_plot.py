@@ -2,13 +2,17 @@ import pickle
 import numpy as np
 import pylab
 import do_measurements as dm
+from plotters import rgb_alpha
 from matplotlib import rc
 rc('text', usetex=True)
 
+bandcolor = rgb_alpha((0,255,255), 1.)
 
 #f = open('noscatter_mstar_dep_imf_coeff0.5.dat', 'r')
 #f = open('mstar_dep_imf_coeff0.4.dat', 'r')
 f = open('mstar_dep_imf_coeff0.3.dat', 'r')
+#f = open('mstar-flat_dep_imf_coeff0.33.dat', 'r')
+#f = open('randmerger_mstar_dep_imf_coeff0.33.dat', 'r')
 #f = open('mstar_dep_imf_coeff0.5_mhmax13.dat', 'r')
 #f = open('mstar-wscatter_dep_imf_coeff0.5.dat', 'r')
 ms_galaxies = pickle.load(f)
@@ -73,7 +77,7 @@ for i in range(0,51):
 fig = pylab.figure()
 ax1 = fig.add_subplot(2, 2, 1)
 pylab.subplots_adjust(left=0.1, right=0.99, bottom=0.1, top=0.99, hspace=0., wspace=0.)
-pylab.fill_between(xsm, m16, m84, color='c')
+pylab.fill_between(xsm, m16, m84, color=bandcolor)
 
 fitpars = []
 for i in range(0, nsnap):
@@ -106,13 +110,14 @@ pylab.legend(scatterpoints=1, fontsize=14, loc='upper left')
 #pylab.xticks(fontsize=14)
 pylab.yticks(fontsize=14)
 yticks = ax1.yaxis.get_major_ticks()
-yticks[0].label1.set_visible(False)
+#yticks[0].label1.set_visible(False)
+yticks[1].label1.set_visible(False)
 yticks[-2].label1.set_visible(False)
 pylab.tick_params(axis='x', labelbottom='off')
 
 fitpars = []
 pylab.subplot(2,2,2)
-pylab.fill_between(xsv, v16, v84, color='c')
+pylab.fill_between(xsv, v16, v84, color=bandcolor)
 for i in range(0, nsnap):
     vdisp_ms = np.zeros(ngal)
     aimf_ms = np.zeros(ngal)
@@ -125,7 +130,7 @@ for i in range(0, nsnap):
     fitpars.append(par)
 
 xlim = pylab.xlim()
-ylim = pylab.ylim()
+#ylim = pylab.ylim()
 xs = np.linspace(xlim[0], xlim[1], 51)
 
 for i in range(0, nsnap):
@@ -150,7 +155,7 @@ alphas = [0.2, 0.5, 1.0]
 
 ax3 = pylab.subplot(2, 2, 3)
 
-pylab.fill_between(xsm, m16, m84, color='c')
+pylab.fill_between(xsm, m16, m84, color=bandcolor)
 
 fitpars = []
 for i in range(0, nsnap):
@@ -184,7 +189,7 @@ pylab.xticks(fontsize=14)
 pylab.yticks(fontsize=14)
 yticks = ax3.yaxis.get_major_ticks()
 yticks[0].label1.set_visible(False)
-yticks[-2].label1.set_visible(False)
+yticks[-1].label1.set_visible(False)
 pylab.text(11.8, -0.3, '$\sigma$ model', fontsize=14)
 
 xticks = ax3.xaxis.get_major_ticks()
@@ -193,7 +198,7 @@ xticks[-1].label1.set_visible(False)
 
 
 ax4 = pylab.subplot(2, 2, 4)
-pylab.fill_between(xsv, v16, v84, color='c')
+pylab.fill_between(xsv, v16, v84, color=bandcolor)
 
 fitpars = []
 for i in range(0, nsnap):
@@ -229,10 +234,10 @@ pylab.text(2.5, -0.3, '$\sigma$ model', fontsize=14)
 pylab.tick_params(axis='y', labelleft='off')
 xticks = ax4.xaxis.get_major_ticks()
 xticks[0].label1.set_visible(False)
-xticks[-2].label1.set_visible(False)
+xticks[-1].label1.set_visible(False)
 
 
-pylab.savefig('snapshots.png')
+pylab.savefig('snapshots.eps')
 
 
 pylab.show()
