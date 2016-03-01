@@ -69,7 +69,7 @@ class ETG:
             raise ValueError("sf_recipe must be one between 'sigma' and 'mstar'.")
 
 
-    def evolve(self, ximin=0.03, dz=0.01, z_low=0., z_up=2., imf_recipe='SigmaSF', imf_coeff=(0.1, 0.3), merger_boost=1.):
+    def evolve(self, ximin=0.03, dz=0.01, z_low=0., z_up=2., imf_recipe='SigmaSF', imf_coeffs=((0.1, 0.3)), merger_boost=1.):
 
         self.z = np.arange(z_low, z_up, dz)
 
@@ -95,10 +95,15 @@ class ETG:
 
         self.ire = 0.*self.z
 
-	self.xieff = 0.*self.z
-	self.rfuncatxieff = 0.*self.z
+        self.xieff = 0.*self.z
+        self.rfuncatxieff = 0.*self.z
 
         for i in range(0, nz):
+
+            if len(imf_coeffs) == 2:
+                imf_coeff = imf_coeffs
+            else:
+                imf_coeff = imf_coeffs[i]
 
             lmhalo_grid = shmrs.mhfunc(lmstar_grid, self.z[i])
             lmhalo_spline = splrep(lmhalo_grid, lmstar_grid)
@@ -110,20 +115,26 @@ class ETG:
                 lambda xi: rfunc(xi*self.mhalo[i])*xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
             imxiz = quad(
                 lambda xi: rfunc(xi*self.mhalo[i])*xi**(beta+2.)*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
-	    self.xieff[i] = imxiz/imz
-	    self.rfuncatxieff[i] = rfunc(self.xieff[i]*self.mhalo[i])
+
+            self.xieff[i] = imxiz/imz
+            self.rfuncatxieff[i] = rfunc(self.xieff[i]*self.mhalo[i])
 
             self.dmstar_chab_dz[i] = -merger_boost*A*imz*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
 
             imtz = quad(
                 lambda xi: recipes.satellite_imf(
-                    np.log10(xi*self.mhalo[i]*rfunc(xi*self.mhalo[i])), z=self.z_0, recipe=imf_recipe, coeff=imf_coeff, lmhalo=np.log10(xi*self.mhalo[i]))* \
+                    np.log10(xi*self.mhalo[i]*rfunc(xi*self.mhalo[i])), z=self.z[i], recipe=imf_recipe, coeff=imf_coeff, lmhalo=np.log10(xi*self.mhalo[i]))* \
                            rfunc(xi*self.mhalo[i])*xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
 
             self.dmstar_true_dz[i] = -merger_boost*A*imtz*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
 
             ire = quad(lambda xi: (2.-np.log(1.+xi**(2.-betaR))/np.log(1.+xi))*rfunc(xi*self.mhalo[i])* \
                            xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
+
+            def epsilon(xi):
+                mstar_sat = rfunc(self.mhalo[i]*xi)
+                vdisp_sat = recipes.vdisp_mstar_rel_mason(np.log10(mstar_sat), self.z[i])
+                return (vdisp_sat/self.velisp[i])**2
 
             isigma = quad(lambda xi: -0.5*(1. - np.log(1.+xi**(2.-betaR))/np.log(1.+xi))*rfunc(xi*self.mhalo[i])* \
                            xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
@@ -144,6 +155,11 @@ class ETG:
                                                  self.mstardlnre_dz[i-1]/self.mstar_chab[i-1])*dz)
             self.veldisp[i] = self.veldisp[i-1]*(1. + 0.5*(self.mstardlnsigma_dz[i]/self.mstar_chab[i] + \
                                                  self.mstardlnsigma_dz[i-1]/self.mstar_chab[i-1])*dz)
+
+        if len(imf_coeffs) == 2:
+            imf_coeff = imf_coeffs
+        else:
+            imf_coeff = imf_coeffs[-1]
 
         if imf_recipe == 'SigmaSF':
             self.imf_form = 10.**recipes.limf_func_cvd12(self.mstar_chab[i_form], self.re[i_form], self.dt_form, imf_coeff)
