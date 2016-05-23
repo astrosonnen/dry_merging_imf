@@ -69,7 +69,7 @@ class ETG:
             raise ValueError("sf_recipe must be one between 'sigma' and 'mstar'.")
 
 
-    def evolve(self, ximin=0.03, dz=0.01, z_low=0., z_up=2., imf_recipe='SigmaSF', imf_coeffs=((0.1, 0.3)), merger_boost=1.):
+    def evolve(self, ximin=0.03, dz=0.01, z_low=0., z_up=2., imf_recipe='SigmaSF', imf_coeff=(0.1, 0.3)):
 
         self.z = np.arange(z_low, z_up, dz)
 
@@ -85,10 +85,11 @@ class ETG:
         self.dmstar_chab_dz = 0.*self.z
         self.dmstar_true_dz = 0.*self.z
         self.mstardlnre_dz = 0.*self.z
-        self.mstardlnsigma_dz = 0.*self.z
+        self.dlnsigma2_dz = 0.*self.z
         self.lnradrat = 0.*self.z
 
         self.mstar_chab = 0.*self.z + self.mstar_chab_0
+        self.mstar_salp = 0.*self.z + self.mstar_chab_0 + 0.25
         self.mstar_true = 0.*self.z
         self.re = 0.*self.z + self.re_0
         self.veldisp = 0.*self.z + self.sigma_0
@@ -98,12 +99,14 @@ class ETG:
         self.xieff = 0.*self.z
         self.rfuncatxieff = 0.*self.z
 
-        for i in range(0, nz):
+        for i in range(nz-2, -1, -1):
 
+            """
             if len(imf_coeffs) == 2:
                 imf_coeff = imf_coeffs
             else:
                 imf_coeff = imf_coeffs[i]
+            """
 
             lmhalo_grid = shmrs.mhfunc(lmstar_grid, self.z[i])
             lmhalo_spline = splrep(lmhalo_grid, lmstar_grid)
@@ -119,47 +122,38 @@ class ETG:
             self.xieff[i] = imxiz/imz
             self.rfuncatxieff[i] = rfunc(self.xieff[i]*self.mhalo[i])
 
-            self.dmstar_chab_dz[i] = -merger_boost*A*imz*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
+            self.dmstar_chab_dz[i] = -A*imz*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
 
             imtz = quad(
                 lambda xi: recipes.satellite_imf(
                     np.log10(xi*self.mhalo[i]*rfunc(xi*self.mhalo[i])), z=self.z[i], recipe=imf_recipe, coeff=imf_coeff, lmhalo=np.log10(xi*self.mhalo[i]))* \
                            rfunc(xi*self.mhalo[i])*xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
 
-            self.dmstar_true_dz[i] = -merger_boost*A*imtz*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
+            self.dmstar_true_dz[i] = -A*imtz*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
 
             ire = quad(lambda xi: (2.-np.log(1.+xi**(2.-betaR))/np.log(1.+xi))*rfunc(xi*self.mhalo[i])* \
                            xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
 
             def epsilon(xi):
-                mstar_sat = rfunc(self.mhalo[i]*xi)
+                mstar_sat = rfunc(self.mhalo[i]*xi)*xi*self.mhalo[i]
                 vdisp_sat = recipes.vdisp_mstar_rel_mason(np.log10(mstar_sat), self.z[i])
-                return (vdisp_sat/self.velisp[i])**2
+                return (vdisp_sat/self.veldisp[i+1])**2
 
-            isigma = quad(lambda xi: -0.5*(1. - np.log(1.+xi**(2.-betaR))/np.log(1.+xi))*rfunc(xi*self.mhalo[i])* \
-                           xi**(beta+1.)*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
+            isigma2 = quad(lambda xi: ((1.+xi*epsilon(xi))/(1.+xi) - 1)*xi**beta*np.exp((xi/xitilde)**gamma), ximin, 1.)[0]
 
-            self.mstardlnre_dz[i] = -merger_boost*A*ire*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
-            self.mstardlnsigma_dz[i] = -merger_boost*A*isigma*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
+            self.mstardlnre_dz[i] = -A*ire*self.mhalo[i]*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
+            self.dlnsigma2_dz[i] = -A*isigma2*(self.mhalo[i]/1e12)**alpha*(1.+self.z[i])**etap
 
-        for i in range(i_0-1, -1, -1):
-            self.mstar_chab[i] = self.mstar_chab[i+1] - 0.5*(self.dmstar_chab_dz[i] + self.dmstar_chab_dz[i+1])*dz
-            self.re[i] = self.re[i+1]*(1. - 0.5*(self.mstardlnre_dz[i]/self.mstar_chab[i] + \
-                                                 self.mstardlnre_dz[i+1]/self.mstar_chab[i+1])*dz)
-            self.veldisp[i] = self.veldisp[i+1]*(1. - 0.5*(self.mstardlnsigma_dz[i]/self.mstar_chab[i] + \
-                                                 self.mstardlnsigma_dz[i+1]/self.mstar_chab[i+1])*dz)
+            self.mstar_chab[i] = self.mstar_chab[i+1] - self.dmstar_chab_dz[i]*dz
 
-        for i in range(i_0+1, nz):
-            self.mstar_chab[i] = self.mstar_chab[i-1] + 0.5*(self.dmstar_chab_dz[i] + self.dmstar_chab_dz[i-1])*dz
-            self.re[i] = self.re[i-1]*(1. + 0.5*(self.mstardlnre_dz[i]/self.mstar_chab[i] + \
-                                                 self.mstardlnre_dz[i-1]/self.mstar_chab[i-1])*dz)
-            self.veldisp[i] = self.veldisp[i-1]*(1. + 0.5*(self.mstardlnsigma_dz[i]/self.mstar_chab[i] + \
-                                                 self.mstardlnsigma_dz[i-1]/self.mstar_chab[i-1])*dz)
+            self.veldisp[i] = self.veldisp[i+1]*(1. - 0.5*self.dlnsigma2_dz[i]*dz)
 
+        """
         if len(imf_coeffs) == 2:
             imf_coeff = imf_coeffs
         else:
             imf_coeff = imf_coeffs[-1]
+        """
 
         if imf_recipe == 'SigmaSF':
             self.imf_form = 10.**recipes.limf_func_cvd12(self.mstar_chab[i_form], self.re[i_form], self.dt_form, imf_coeff)
@@ -184,7 +178,8 @@ class ETG:
         for i in range(i_form-1, -1, -1):
             self.mstar_true[i] = self.mstar_true[i+1] - 0.5*(self.dmstar_true_dz[i] + self.dmstar_true_dz[i+1])*dz
 
-        self.aimf = self.mstar_true/self.mstar_chab
+        self.mstar_salp = self.mstar_chab + 0.25
+        self.aimf = self.mstar_true/self.mstar_salp
 
 
     def snapshot(self, z_snap=1., ximin=0.03):

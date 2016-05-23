@@ -1,31 +1,23 @@
 import numpy as np
-import pylab
 import shmrs
-import galaxies
+import popevol
 import recipes
 import pickle
-import measurements
-
 
 Ngal = 100   # sample size
 
 z_0 = 2.
 
-#imf_recipe = 'mstar'
-#imf_recipe = 'mstar-flat'
-#imf_recipe = 'mstar-wscatter'
+imf_recipe = 'mstar'
+imf_coeff = (0.11, 0.26)
+#imf_recipe = 'vdisp'
+#imf_coeff = (-0.06, 1.00)
 #imf_recipe = 'mhalo'
-#imf_recipe = 'mstar-vdisp'
-imf_recipe = 'vdisp'
-#imf_coeff = (0.2, -0.1, 1.5, 0.0)
-imf_coeff = (2.3, -0.35)
-#imf_coeff = (0.3, 0.0)
-#imf_coeff = (0.33, 0.07)
+#imf_coeff = (0.0, 0.3)
 
-outname = '%s_dep_imf_coeff%4.2f.dat'%(imf_recipe, imf_coeff[0])
-#outname = '%s_dep_imf_coeff%4.2f%4.2f.dat'%(imf_recipe, imf_coeff[0], imf_coeff[2])
+vdisp_coeff = (2.48, 0.20)
 
-boost = 1.
+outname = 'pop_%s_model_%3.2f_%3.2f.dat'%(imf_recipe, imf_coeff[0], imf_coeff[1])
 
 lmhalos = shmrs.generate_halos(100000, z=2., lmhmax=13.5)
 lmstars = shmrs.generate_mstar(lmhalos, z=2., scat=0.18)
@@ -37,23 +29,16 @@ lmhalo_sample = lmhalos[ind_sample]
 lmstar_sample = lmstars[ind_sample]
 print len(lmstar_sample[lmstar_sample>12])
 reff_sample = recipes.generate_reff(lmstar_sample, z_0)
-vdisp_sample = recipes.generate_veldisp_from_mstar(lmstar_sample, z_0)
+#vdisp_sample = recipes.generate_veldisp_from_mstar(lmstar_sample, z_0)
+vdisp_sample = 10.**(vdisp_coeff[0] + vdisp_coeff[1]*(lmstar_sample - 11.) + np.random.normal(0., 0.04, Ngal))
+
 aimf_z2_sample = 0.*lmstar_sample
 
-centrals = []
-for i in range(0, Ngal):
-    central = galaxies.ETG(z_0=z_0, mstar_chab_0=10.**lmstar_sample[i], mhalo_0=10.**lmhalo_sample[i], \
-                           re_0=reff_sample[i], sigma_0=vdisp_sample[i])
+pop = popevol.population(z_0=z_0, nobj=Ngal, mstar_chab_0=10.**lmstar_sample, mhalo_0=10.**lmhalo_sample, \
+                         veldisp_0=vdisp_sample)
 
-    central.z_form = 2.
-    central.evolve(z_low=0., z_up = z_0, imf_recipe=imf_recipe, imf_coeffs=(imf_coeff), merger_boost=boost)
-
-    centrals.append(central)
-    aimf_z2_sample[i] = central.aimf[-1]
-
-#fits linear model of IMF dependence, at z=2.
-pars = measurements.fit_fixed_z(lmstar_sample, np.log10(reff_sample), np.log10(aimf_z2_sample))
+pop.evolve(z_low=0., imf_recipe=imf_recipe, imf_coeff=imf_coeff, vdisp_coeff=vdisp_coeff)
 
 f = open(outname, 'w')
-pickle.dump(centrals, f)
+pickle.dump(pop, f)
 f.close()

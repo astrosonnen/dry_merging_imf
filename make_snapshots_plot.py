@@ -6,46 +6,41 @@ from plotters import rgb_alpha
 
 bandcolor = rgb_alpha((0,255,255), 1.)
 
-#f = open('noscatter_mstar_dep_imf_coeff0.5.dat', 'r')
-#f = open('mstar_dep_imf_coeff0.4.dat', 'r')
-f = open('mstar_dep_imf_coeff0.33_it3.dat', 'r')
-#f = open('mstar-flat_dep_imf_coeff0.33.dat', 'r')
-#f = open('randmerger_mstar_dep_imf_coeff0.33.dat', 'r')
-#f = open('mstar_dep_imf_coeff0.5_mhmax13.dat', 'r')
-#f = open('mstar-wscatter_dep_imf_coeff0.5.dat', 'r')
-ms_galaxies = pickle.load(f)
+f = open('pop_mstar_model_0.11_0.26.dat', 'r')
+ms_pop = pickle.load(f)
 f.close()
 
 ngal = 100
 
-f = open('vdisp_dep_imf_coeff2.30_it3.dat', 'r')
-#f = open('vdisp_dep_imf_coeff2.0_mhmax13.dat', 'r')
-#f = open('mhalo_dep_imf_coeff0.3.dat', 'r')
-#f = open('mstar-vdisp_dep_imf_coeff-0.31.5.dat', 'r')
-vd_galaxies = pickle.load(f)
+f = open('pop_vdisp_model_-0.06_1.00.dat', 'r')
+vd_pop = pickle.load(f)
 f.close()
 
-snaps = [199, 100, 0]
+snaps = [199, 100, 30]
 markers = ['s', '^', 'o']
-labels = ['$z=2$', '$z=1$', '$z=0$']
+labels = ['$z=2$', '$z=1$', '$z=0.3$']
 colors = ['b', 'g', 'r']
 nsnap = len(snaps)
 
-son15_a = 0.20
-son15_a_err = 0.04
-son15_b = 0.05
-son15_b_err = 0.02
-Nsamp = 1000
-son15_a_samp = np.random.normal(son15_a,son15_a_err,Nsamp)
-son15_b_samp = np.random.normal(son15_b,son15_b_err,Nsamp)
+fitdir = '/gdrive/projects/SL2S_hierarch/'
 
-pos15_a = 1.30
-pos15_a_err = 0.23
-pos15_b = -0.14
-pos15_b_err = 0.03
-pos15_piv = np.log10(200.)
-pos15_a_samp = np.random.normal(pos15_a,pos15_a_err,Nsamp)
-pos15_b_samp = np.random.normal(pos15_b,pos15_b_err,Nsamp)
+f = open(fitdir+'evol_nfw_alpha_only_msps_only.dat', 'r')
+msps_chain = pickle.load(f)
+f.close()
+
+Nsamp = 1000
+indices = np.arange(20000, 100000)
+samp = np.random.choice(indices, Nsamp)
+mspsfit_a_samp = msps_chain['amstar'][samp]
+mspsfit_b_samp = msps_chain['calpha'][samp]
+
+f = open(fitdir+'evol_nfw_alpha_only_sigma_only.dat', 'r')
+sigma_chain = pickle.load(f)
+f.close()
+
+sigmafit_piv = np.log10(250.)
+sigmafit_a_samp = sigma_chain['asigma'][samp]
+sigmafit_b_samp = sigma_chain['calpha'][samp]
 
 xlimm = (10.5,12.5)
 xlimv = (2.2,2.6)
@@ -56,7 +51,7 @@ xsm = np.linspace(xlimm[0], xlimm[1],51)
 m84 = 0.*xsm
 m16 = 0.*xsm
 for i in range(0,51):
-    aimf_samp = son15_b_samp + son15_a_samp*(xsm[i] - 11.5)
+    aimf_samp = mspsfit_b_samp + mspsfit_a_samp*(xsm[i] - 11.5)
     m84[i] = np.percentile(aimf_samp, 84.)
     m16[i] = np.percentile(aimf_samp, 16.)
 
@@ -66,7 +61,7 @@ xsv = np.linspace(xlimv[0], xlimv[1], 51)
 v84 = 0.*xsv
 v16 = 0.*xsv
 for i in range(0,51):
-    aimf_samp = pos15_b_samp + pos15_a_samp*(xsv[i] - pos15_piv)
+    aimf_samp = sigmafit_b_samp + sigmafit_a_samp*(xsv[i] - sigmafit_piv)
     v84[i] = np.percentile(aimf_samp, 84.)
     v16[i] = np.percentile(aimf_samp, 16.)
 
@@ -79,15 +74,11 @@ pylab.fill_between(xsm, m16, m84, color=bandcolor)
 
 fitpars = []
 for i in range(0, nsnap):
-    mchab_ms = np.zeros(ngal)
-    vdisp_ms = np.zeros(ngal)
-    aimf_ms = np.zeros(ngal)
-    for j in range(0, ngal):
-	mchab_ms[j] = np.log10(ms_galaxies[j].mstar_chab[snaps[i]])
-	aimf_ms[j] = np.log10(ms_galaxies[j].aimf[snaps[i]])
+    mchab_ms = np.log10(ms_pop.mstar_salp[:, snaps[i]])
+    aimf_ms = np.log10(ms_pop.aimf[:, snaps[i]])
     pylab.scatter(mchab_ms, aimf_ms, color=colors[i], s=30, marker=markers[i], label=labels[i])
     par, scat = dm.fit_mstar_only(mchab_ms, aimf_ms)
-    print scat
+    print i, par, scat
     fitpars.append(par)
 
 xlim = pylab.xlim()
@@ -117,11 +108,8 @@ fitpars = []
 pylab.subplot(2,2,2)
 pylab.fill_between(xsv, v16, v84, color=bandcolor)
 for i in range(0, nsnap):
-    vdisp_ms = np.zeros(ngal)
-    aimf_ms = np.zeros(ngal)
-    for j in range(0, ngal):
-	vdisp_ms[j] = np.log10(ms_galaxies[j].veldisp[snaps[i]])
-	aimf_ms[j] = np.log10(ms_galaxies[j].aimf[snaps[i]])
+    vdisp_ms = np.log10(ms_pop.veldisp[:, snaps[i]])
+    aimf_ms = np.log10(ms_pop.aimf[:, snaps[i]])
     pylab.scatter(vdisp_ms, aimf_ms, color=colors[i], s=30, marker=markers[i], label=labels[i])
     par, scat = dm.fit_sigma_only(vdisp_ms, aimf_ms)
     print scat
@@ -157,12 +145,8 @@ pylab.fill_between(xsm, m16, m84, color=bandcolor)
 
 fitpars = []
 for i in range(0, nsnap):
-    mchab_vd = np.zeros(ngal)
-    vdisp_vd = np.zeros(ngal)
-    aimf_vd = np.zeros(ngal)
-    for j in range(0, ngal):
-	mchab_vd[j] = np.log10(vd_galaxies[j].mstar_chab[snaps[i]])
-	aimf_vd[j] = np.log10(vd_galaxies[j].aimf[snaps[i]])
+    mchab_vd = np.log10(vd_pop.mstar_salp[:, snaps[i]])
+    aimf_vd = np.log10(vd_pop.aimf[:, snaps[i]])
     pylab.scatter(mchab_vd, aimf_vd, color=colors[i], s=30, marker=markers[i], label=labels[i])
     par, scat = dm.fit_mstar_only(mchab_vd, aimf_vd)
     print scat
@@ -200,12 +184,8 @@ pylab.fill_between(xsv, v16, v84, color=bandcolor)
 
 fitpars = []
 for i in range(0, nsnap):
-    mchab_vd = np.zeros(ngal)
-    vdisp_vd = np.zeros(ngal)
-    aimf_vd = np.zeros(ngal)
-    for j in range(0, ngal):
-	vdisp_vd[j] = np.log10(vd_galaxies[j].veldisp[snaps[i]])
-	aimf_vd[j] = np.log10(vd_galaxies[j].aimf[snaps[i]])
+    vdisp_vd = np.log10(vd_pop.veldisp[:, snaps[i]])
+    aimf_vd = np.log10(vd_pop.aimf[:, snaps[i]])
     pylab.scatter(vdisp_vd, aimf_vd, color=colors[i], s=30, marker=markers[i], label=labels[i])
     par, scat = dm.fit_sigma_only(vdisp_vd, aimf_vd)
     print scat
