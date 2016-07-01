@@ -4,9 +4,9 @@ import pylab
 import do_measurements as dm
 from plotters import probcontour
 
-snaps = [199, 100, 0]
+snaps = [199, 100, 30]
 markers = ['s', '^', 'o']
-labels = ['$z=2$', '$z=1$', '$z=0$']
+labels = ['$z=2$', '$z=1$', '$z=0.3$']
 colors = ['b', 'g', 'r']
 nsnap = len(snaps)
 
@@ -22,7 +22,7 @@ lsize=24
 msize=100
 
 # does the fit at each timestep, to follow the time evolution on the scaling relations in better detail
-f = open('pop_mstar_model_0.11_0.26.dat', 'r')
+f = open('pop_mstar_model.dat', 'r')
 pop = pickle.load(f)
 f.close()
 
@@ -34,30 +34,36 @@ laimf = np.empty(Ngal)
 
 fig = pylab.figure()
 ax = fig.add_subplot(111)
-pylab.subplots_adjust(left=0.1, right=0.99, bottom=0.1, top=0.99)
+pylab.subplots_adjust(left=0.15, right=0.99, bottom=0.15, top=0.99)
 
 
-probcontour(mdep_chain, sdep_chain, style=(1., 51./255., 1.))
+probcontour(mdep_chain, sdep_chain, style=(0., 0.7, 1.))
+probcontour(mdep_chain, sdep_chain, style='black')
 
 mspar = []
 vdpar = []
-for j in range(0,200):
+for j in range(0, 200):
 
     lmstar = np.log10(pop.mstar_chab[:, j])
     lsigma = np.log10(pop.veldisp[:, j])
     laimf = np.log10(pop.aimf[:, j])
 
+    """
     pars, scat = dm.fit_mstar_sigma_fixed_z(lmstar, lsigma, laimf)
+
     mspar.append(pars[1])
     vdpar.append(pars[2])
+    """
+    mspar.append(pop.imf_coeff[j, 1])
+    vdpar.append(pop.imf_coeff[j, 2])
 
-pylab.plot(mspar, vdpar, color='k')
+pylab.plot(mspar[30:], vdpar[30:], color='k')
 for i in range(0, nsnap):
     pylab.scatter(mspar[snaps[i]], vdpar[snaps[i]], color=colors[i], marker=markers[i], s=msize)
 
 
 
-f = open('pop_vdisp_model_-0.06_1.00.dat', 'r')
+f = open('pop_vdisp_model.dat', 'r')
 pop = pickle.load(f)
 f.close()
 
@@ -68,17 +74,22 @@ laimf = np.empty(Ngal)
 
 mspar = []
 vdpar = []
-for j in range(0,200):
+for j in range(0, 200):
 
     lmstar = np.log10(pop.mstar_chab[:, j])
     lsigma = np.log10(pop.veldisp[:, j])
     laimf = np.log10(pop.aimf[:, j])
 
+    """
     pars, scat = dm.fit_mstar_sigma_fixed_z(lmstar, lsigma, laimf, guess=(0.,0.,2.3))
     mspar.append(pars[1])
     vdpar.append(pars[2])
+    """
 
-pylab.plot(mspar, vdpar, color='k')
+    mspar.append(pop.imf_coeff[j, 1])
+    vdpar.append(pop.imf_coeff[j, 2])
+
+pylab.plot(mspar[30:], vdpar[30:], color='k')
 
 for i in range(0, nsnap):
     pylab.scatter(mspar[snaps[i]], vdpar[snaps[i]], color=colors[i], marker=markers[i], s=msize)

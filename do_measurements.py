@@ -4,6 +4,35 @@ import pickle
 import pymc
 
 
+def fit_imf_coeff_around_average(lmstar_sample, lsigma_sample, laimf_sample, guess=(0., 0.3, 0.3)):
+
+    mustar = lmstar_sample.mean()
+    musigma = lsigma_sample.mean()
+
+    def modelfunc(p):
+        return p[0] + p[1]*(lmstar_sample - mustar) + p[2]*(lsigma_sample - musigma)
+
+    def errfunc(p):
+        return modelfunc(p) - laimf_sample
+
+    par, cov = leastsq(errfunc, guess)
+
+    return par, (mustar, musigma)
+
+
+def fit_imf_coeff_movingpivot(lmstar_sample, lsigma_sample, laimf_sample, mpiv=11.5, spiv=2.4, guess=(0., 0.3, 0.3)):
+
+    def modelfunc(p):
+        return p[0] + p[1]*(lmstar_sample - mpiv) + p[2]*(lsigma_sample - spiv)
+
+    def errfunc(p):
+        return modelfunc(p) - laimf_sample
+
+    par, cov = leastsq(errfunc, guess)
+
+    return par
+
+
 def fit_mstar_re_fixed_z(lmstar_sample, lreff_sample, aimf_sample, guess=(0.3, 0.3, 0.)):
 
     def modelfunc(p):
@@ -35,7 +64,7 @@ def fit_mhalo(lmstar_sample, lreff_sample, lmhalo_sample, guess=(13., 0.3, 0.3))
 def fit_mstar_sigma_fixed_z(lmstar_sample, lsigma_sample, aimf_sample, guess=(0.3, 0.3, 0.)):
 
     def modelfunc(p):
-        return p[0] + p[1]*(lmstar_sample - 11.5) + p[2]*(lsigma_sample - np.log10(200.))
+        return p[0] + p[1]*(lmstar_sample - 11.5) + p[2]*(lsigma_sample - 2.4)
 
     def errfunc(p):
         return modelfunc(p) - aimf_sample

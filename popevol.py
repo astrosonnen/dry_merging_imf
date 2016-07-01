@@ -47,8 +47,10 @@ class population:
         self.xieff = None
         self.rfuncatxieff = None
         self.dlnsigma2_dz = None
+        self.vdisp_coeff = None
+        self.imf_coeff = None
 
-    def evolve(self, ximin=0.03, dz=0.01, z_low=0., imf_recipe='mstar', imf_coeff=(0.1, 0.3), vdisp_coeff=(2.40, 0.18)):
+    def evolve(self, ximin=0.03, dz=0.01, z_low=0., imf_recipe='mstar-vdisp', imf_coeff=(0.2, 0.2, 0.5), vdisp_coeff=(2.40, 0.18)):
 
         self.z = np.arange(z_low, self.z_0, dz)
         nz = len(self.z)
@@ -65,14 +67,20 @@ class population:
         self.mstar_salp[:, -1] = self.mstar_salp_0
         self.veldisp[:, -1] = self.veldisp_0
 
+        self.vdisp_coeff = np.zeros((nz, 2), dtype='float')
+        self.vdisp_coeff[-1] = vdisp_coeff
+
+        self.imf_coeff = np.zeros((nz, len(imf_coeff)), dtype='float')
+        self.imf_coeff[-1] = imf_coeff
+
         for i in range(self.nobj):
             self.mhalo[i, :] = 1e12*((self.mhalo_0[i]/1e12)**(1.-bpar) - (1-bpar)/H0*Mdot/1e12*izfunc(self.z, self.z_0))**(1./(1.-bpar))
             if imf_recipe == 'mstar':
                 self.aimf[i, -1] = 10.**recipes.limf_func_mstar(np.log10(self.mstar_salp_0[i]), imf_coeff)
             elif imf_recipe == 'vdisp':
                 self.aimf[i, -1] = 10.**recipes.limf_func_vdisp(np.log10(self.veldisp_0[i]), imf_coeff)
-            elif imf_recipe == 'mhalo':
-                self.aimf[i, -1] = 10.**recipes.limf_func_mhalo(np.log10(self.mhalo_0[i]), imf_coeff)
+            elif imf_recipe == 'mstar-vdisp':
+                self.aimf[i, -1] = 10.**recipes.limf_func_mstarvdisp(np.log10(self.mstar_salp_0[i]), np.log10(self.veldisp_0[i]), imf_coeff)
 
         self.mstar_true[:, -1] += self.mstar_salp_0 * self.aimf[:, -1]
 
@@ -99,10 +107,10 @@ class population:
                 dmstar_chab_dz = -A*imz*self.mhalo[j, i]*(self.mhalo[j, i]/1e12)**alpha*(1.+self.z[i])**etap
 
                 def integrand(xi):
-                    thing = recipes.satellite_imf(np.log10(xi*self.mhalo[j, i]*rfunc(xi*self.mhalo[j, i])) + 0.25, \
-                                                     z=self.z[i], recipe=imf_recipe, coeff=imf_coeff, \
-                                                     lmhalo=np.log10(xi*self.mhalo[j, i]))* \
-                           rfunc(xi*self.mhalo[j, i])*10.**0.25*xi**(beta+1.)*np.exp((xi/xitilde)**gamma)
+                    lmstar_here = np.log10(xi*self.mhalo[j, i]*rfunc(xi*self.mhalo[j, i]))
+                    thing = recipes.satellite_imf(lmstar_here + 0.25, z=self.z[i], recipe=imf_recipe, coeff=imf_coeff, \
+                                                  lvdisp=vdisp_coeff[0] + vdisp_coeff[1]*(lmstar_here - 11.))* \
+                            rfunc(xi*self.mhalo[j, i])*10.**0.25*xi**(beta+1.)*np.exp((xi/xitilde)**gamma)
                     return thing
 
                 imtz = quad(integrand, ximin, 1.)[0]
@@ -130,6 +138,7 @@ class population:
                                                  guess=vdisp_coeff)[0]
 
             vdisp_coeff = fit_vdisp_coeff
+            self.vdisp_coeff[i, :] = vdisp_coeff
             self.aimf[:, i] = self.mstar_true[:, i] / self.mstar_salp[:, i]
 
             if imf_recipe == 'mstar':
@@ -138,9 +147,11 @@ class population:
             elif imf_recipe == 'vdisp':
                  imf_coeff = do_measurements.fit_sigma_only(np.log10(self.veldisp[:, i]), np.log10(self.aimf[:, i]), \
                                                    guess=imf_coeff)[0]
-            elif imf_recipe == 'mhalo':
-                  imf_coeff = do_measurements.fit_mhalo_only(np.log10(self.mhalo[:, i]), np.log10(self.aimf[:, i]), \
+            elif imf_recipe == 'mstar-vdisp':
+                  imf_coeff = do_measurements.fit_mstar_sigma_fixed_z(np.log10(self.mstar_salp[:, i]), np.log10(self.veldisp[:, i]), np.log10(self.aimf[:, i]), \
                                                    guess=imf_coeff)[0]
+
+            self.imf_coeff[i, :] = imf_coeff
 
             print i, imf_coeff, fit_vdisp_coeff
 
