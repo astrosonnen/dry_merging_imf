@@ -122,7 +122,7 @@ def mcmcfit_mstar_sigma(lmstar_sample, lsigma_sample, aimf_sample, guess=(0.3, 0
 def fit_sigma_only(lsigma_sample, aimf_sample, guess=(0., 1.3)):
 
     def modelfunc(p):
-        return p[0] + p[1]*(lsigma_sample - 2.3)
+        return p[0] + p[1]*(lsigma_sample - 2.4)
 
     def errfunc(p):
         return modelfunc(p) - aimf_sample
@@ -136,7 +136,7 @@ def fit_sigma_only(lsigma_sample, aimf_sample, guess=(0., 1.3)):
 def fit_mstar_only(lmstar_sample, aimf_sample, guess=(0.3, 0.)):
 
     def modelfunc(p):
-        return p[0] + p[1]*(lmstar_sample - 11.)
+        return p[0] + p[1]*(lmstar_sample - 11.5)
 
     def errfunc(p):
         return modelfunc(p) - aimf_sample
