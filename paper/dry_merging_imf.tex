@@ -1,9 +1,9 @@
+% CN June 30 2016
 %===============================================================================
-
 
 %===============================================================================
 %\documentclass[usenatbib, usegraphicx, letters]{mnras}
-\documentclass[usenatbib, letters]{mnras}
+\documentclass[usenatbib]{mnras}
 
 %\usepackage{natbib}
 \usepackage{graphicx}
@@ -37,7 +37,9 @@
 
 \def\pr{{\rm Pr}}
 \def\hyperp{\boldsymbol{\eta}}
-\def\msalpi{M_*^{\mathrm{Salp},i}}
+\def\indpar{\boldsymbol{\omega}}
+\def\indpari{\boldsymbol{\omega}_i}
+\def\msalpi{M_{*,i}^{\mathrm{Salp}}}
 \def\aimfi{\alpha_{\mathrm{IMF},i}}
 \def\mdmi{M_{\mathrm{DM},5,i}}
 \def\sigmaeei{\sigma_{e2,i}}
@@ -45,16 +47,16 @@
 \def\datadi{\mathbf{d}_i}
 
 \def\Sref#1{Section~\ref{#1}\xspace}
-\def\Fref#1{Figure~\ref{#1}\xspace}
+\def\Fref#1{Fig.~\ref{#1}\xspace}
 \def\Tref#1{Table~\ref{#1}\xspace}
-\def\Eref#1{Equation~\ref{#1}\xspace}
+\def\Eref#1{equation~(\ref{#1})\xspace}
 %\addtolength\topmargin{1cm}
 
 %===============================================================================
 
 \begin{document}
 
-\title{On how dry merges affect the effective stellar IMF of massive galaxies}
+\title[Evolution of the stellar initial mass function of early-type galaxies]{Merger-driven evolution of the effective stellar initial mass function of massive early-type galaxies}
 \author[Sonnenfeld et al.]{
 Alessandro~Sonnenfeld,$^{1,2}$\thanks{E-mail:alessandro.sonnenfeld@ipmu.jp}
 Carlo~Nipoti,$^{3}$
@@ -70,83 +72,180 @@ $^{3}$Department of Physics and Astronomy, Bologna University, viale Berti-Picha
 
 %-------------------------------------------------------------------------------
 \begin{abstract}
-The stellar IMF of early-type galaxies is the combination of the IMF of the stellar population formed in-situ and that of accreted stellar populations.
-Using as an observable the effective IMF normalization, defined as the ratio between the true stellar mass of a galaxy and the stellar mass inferred assuming a Salpeter IMF, we present a theoretical model for its evolution as a result of dry mergers.
-{\bf We use a simple dry merger evolution model based on N-body simulation of binary mergers together with empirically motivated prescriptions for the IMF to make predictions for how the effective IMF of massive early-type galaxies changes from $z=2$ to $z=0$.}
-We find that the IMF normalization of individual galaxies becomes lighter with time.
-Current constraints on the evolution of the IMF are in slight tension with this prediction, but the role of systematic effects in the observations has not been fully assessed.
-The trend of the IMF with stellar mass becomes shallower with time, while the correlation between IMF and velocity dispersion is mostly preserved by dry mergers.
-We also find that dry mergers can mix the dependence of the IMF on stellar mass and velocity dispersion, making it challenging to infer what quantity regulates the IMF from $z=0$ observations of global galactic properties.
+The stellar initial mass function (IMF) of early-type galaxies is the
+combination of the IMF of the stellar population formed in-situ and
+that of accreted stellar populations.  Using as an observable the
+  effective IMF $\aimf$, defined as the ratio between the true stellar
+  mass of a galaxy and the stellar mass inferred assuming a Salpeter
+  IMF, we present a theoretical model for its evolution as a result
+of dry mergers.  We use a simple dry merger evolution model, 
+  based on cosmological $N$-body simulations, together with
+empirically motivated prescriptions for the IMF to make predictions
+for how the effective IMF of massive early-type galaxies changes from
+$z=2$ to $z=0$.  We find that the IMF normalization of individual
+galaxies becomes lighter with time.  Current constraints on the
+evolution of the IMF are in slight tension with this prediction, but
+the role of systematic effects in the observations has not been fully
+assessed.  The correlation of $\aimf$ with stellar mass becomes
+  shallower with time, while the correlation between $\aimf$ and
+  velocity dispersion is mostly preserved by dry mergers.  We also
+find that dry mergers can mix the dependence of the IMF on stellar
+mass and velocity dispersion, making it challenging to infer,
+  from $z=0$ observations of global galactic properties, what is the
+  quantity that originally determines the IMF.
 \end{abstract}
 
 \begin{keywords}
-   galaxies: elliptical and lenticular, cD -- galaxies: evolution
+   galaxies: elliptical and lenticular, cD -- galaxies: evolution -- galaxies: stellar content -- stars: luminosity function, mass function
 \end{keywords}
 
 %-------------------------------------------------------------------------------
 \section{Introduction}\label{sect:intro}
 
-Understanding the origin and variation of the stellar initial mass function (IMF) is currently one of the biggest challenges in galaxy formation theory.
-Observational constraints on the IMF provide us with a puzzling scenario. On the one hand the IMF appears to be remarkably self-similar across different environments within the Milky Way \citep[see e.g.][]{BCM10, Off15}. On the other hand, the IMF in early-type galaxies is inferred to vary systematically as a function of mass or velocity dispersion \citep{Tre++10,Cap++12,CvD12, Dut++12, TRN13, Spi++14, Pos++15}, although even for massive early-type galaxies we are still far from a clear picture \citep{SLC15}. 
-Efforts have been put into reproducing from a theoretical standpoint the observed IMF trends. However, despite recent progress \citep{H+C11,Kru11,Hop12,GKH15}, we still lack a coherent description of star formation across all environments.
+Understanding the properties and the origin of the stellar
+  initial mass function (IMF) is currently one of the biggest
+  challenges in galaxy formation theory.  Observational constraints
+on the IMF provide us with a puzzling scenario. On the one hand the
+IMF appears to be remarkably self-similar across different
+environments within the Milky Way \citep[see e.g.][]{BCM10, Off15}. On
+the other hand, the IMF in early-type galaxies is inferred to vary
+systematically as a function of mass or velocity dispersion
+\citep{Tre++10,Cap++12,CvD12, Dut++12, TRN13, Spi++14, Pos++15},
+although even for massive early-type galaxies we are still far from a
+clear picture \citep{SLC15}.  Efforts have been put into reproducing
+from a theoretical standpoint the observed IMF trends. However,
+despite recent progress \citep{H+C11,Kru11,Hop12,GKH16}, we still lack a coherent description of
+star formation across all environments.
 
-One complication in comparing measurements of the IMF with models is that present day stellar populations are ensembles of stars formed at different epochs in a range of environments.
-For massive early-type galaxies, a significant fraction of their present-day stellar mass is believed to be accreted from other systems \citep[e.g.][]{vDo++10}.
-If the IMF is not universal, then each accreted object will in general have a different IMF from the preexisting population of the central galaxy.
-The IMF of a massive galaxy at $z=0$ will then be the combination of the IMF of the stellar population formed in-situ and that of the accreted galaxies, possibly resulting in spatial gradients \citep{Mar++15, LaB++16}.
-How does this "effective" IMF evolve in time?
-Answering this question and comparing the predictions to observations provides a new way to test galaxy formation and star formation models.
+One complication in comparing measurements of the IMF with models is
+that present-day stellar populations are ensembles of stars formed at
+different epochs in a range of environments.  For massive early-type
+galaxies, a significant fraction of their present-day stellar mass is
+believed to be accreted from other systems \citep[e.g.][]{vDo++10}.
+If the IMF is not universal, then each accreted object will in general
+have a different IMF from the preexisting population of the central
+galaxy.  The IMF of a massive galaxy at $z=0$ will then be the
+combination of the IMF of the stellar population formed in-situ and
+that of the accreted galaxies, possibly resulting in spatial gradients
+\citep{Mar++15, LaB++16}.  How does this "effective" IMF evolve in
+time?  Answering this question and comparing the predictions to
+observations provides a new way to test galaxy formation and star
+formation models.
 
-{\bf While the IMF is typically assumed as universal in cosmological simulations, there are studies of galaxy evolution based on semi-analytical models (SAMs) that allow for a non-universal IMF \citep{Nag++05, Bek13, Cha++15, GargiuloI++15, Fon++16}. These works explore mostly the effect of the IMF on the chemical evolution of galaxies.
-We adopt a much simpler approach than a full-fledged SAM and focus exclusively on the mass normalization of the IMF and its evolution from $z=2$ to the present as a result of dry mergers.}
-%We model the evolution of the effective IMF of massive galaxies from $z=2$ to the present.
-We use a simple prescription for assigning the starting IMF of an ensemble of galaxies and then evolve the stellar population of central galaxies by merging their stellar content with that of accreted satellites.
-We tune our model to match the observed IMF-stellar mass trend at $z\sim0$ and use it to make predictions on the stellar IMF of massive galaxies at higher redshifts.
-{\bf Though very simple in its construction, our model allows us to clearly isolate the effect of dry mergers, which are believed to represent the main growth mechanism of massive early-type galaxies at $z < 2$, on the evolution of the IMF.}
+While the IMF is typically assumed as universal in cosmological
+simulations, there are studies of galaxy evolution based on
+semi-analytical models (SAMs) that allow for a non-universal IMF
+\citep{Nag++05, Bek13, Cha++15, GargiuloI++15, Fon++16}. These works
+explore mostly the effect of the IMF on the chemical evolution of
+galaxies.  We adopt a much simpler approach than a full-fledged SAM
+and focus exclusively on the mass normalization of the IMF and its
+evolution from $z=2$ to the present as a result of dry mergers.
+
+We use a simple prescription for assigning the starting ($z=2$)
+  IMF of an ensemble of galaxies and then evolve the stellar
+population of central galaxies by merging their stellar content with
+that of accreted satellites. We tune our model to match the
+  correlation between IMF normalization and stellar mass observed at
+  $z\sim0$ and use it to make predictions on the stellar IMF of
+  massive galaxies at higher redshifts. Though very simple in its
+construction, our model allows us to clearly isolate the effect of dry
+mergers, which are believed to represent the main growth mechanism of
+massive early-type galaxies at $z < 2$, on the evolution of the IMF.
+
 %Our model is sensitive to a few key aspects of galaxy formation and evolution: star formation in massive galaxies and their satellites, mergers, 
 %The goal of this work is to provide tests with observable quantities.
 %Our goal is to set the ground for tests 
 
-The paper is organized as follows.  In \Sref{sect:model} we describe our model for the IMF of $z=2$ galaxies and its evolution as a result of dry mergers.
-In \Sref{sect:obs} we present low-$z$ measurements of the IMF used to calibrate our model.
-In \Sref{sect:results} we show our predictions on the time evolution of the IMF.
-We discuss and summarize our results in \Sref{sect:discuss}.
+The paper is organized as follows.  In \Sref{sect:model} we describe
+our model for the IMF of $z=2$ galaxies and its evolution as a result
+of dry mergers.  In \Sref{sect:obs} we present low-$z$ measurements of
+the IMF used to calibrate our model.  In \Sref{sect:results} we show
+our predictions on the time evolution of the IMF.  We discuss our
+results in \Sref{sect:discuss}, while \Sref{sect:concl}
+concludes.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{The model}\label{sect:model}
 
 \subsection{Parameters and notation}
-Throughout our work we use the following quantities to describe the stellar content of our galaxies. We first define a true stellar mass, $\mtrue$. Then we introduce a Salpeter stellar mass, $\msalp$, defined as the stellar mass one would infer by fitting a stellar population synthesis model based on a Salpeter IMF to broad-band photometric data. This quantity is typically used when observationally measuring stellar masses.
-We then consider the {\em IMF mismatch parameter} \citep{Tre++10}
+
+Throughout our work we use the following quantities to describe the
+stellar content of our galaxies. We first define a true stellar mass,
+$\mtrue$. Then we introduce a Salpeter \citep{Sal55} stellar
+mass, $\msalp$, defined as the stellar mass one would infer by fitting
+a stellar population synthesis model based on a Salpeter IMF to
+broad-band photometric data. This quantity is typically used when
+observationally measuring stellar masses.  We then consider the {\em
+  IMF mismatch parameter} \citep{Tre++10}
 \begin{equation}\label{eq:aimf}
 \aimf = \frac{\mtrue}{\msalp}.
 \end{equation}
-Stellar populations with a more bottom-light IMF than a Salpeter IMF will have $\alpha<1$. A Chabrier IMF for example corresponds typically to a value $\aimf\approx0.6$.
-As defined above, $\aimf$ is a well-defined quantity also for galaxies that do not have a homogeneous stellar population, for example as a result of mergers.
-For typical cases $\aimf$ is mostly sensitive to the behaviour of the IMF at small masses, which dominate the mass budget but contribute little to the visible light. Depending on the parametrization it can be a probe of low-mass cutoff, slope and/or turnover radius. In extreme cases of course, it can be affected by the IMF at high masses, although that typically leaves an imprint in other phenomena like metal enrichment or supernovae rates.
-In this work, $\aimf$ is the only parameter used to describe the IMF of a galaxy. {\bf Throughout our analysis we identify the term {\em effective IMF} with this quantity.}
+Stellar populations with a more bottom-light IMF than a Salpeter IMF
+will have $\alpha<1$. A Chabrier IMF for example corresponds typically
+to a value $\aimf\approx0.6$.  As defined above, $\aimf$ is a
+well-defined quantity also for galaxies that do not have a homogeneous
+stellar population, for example as a result of mergers.  For typical
+cases $\aimf$ is mostly sensitive to the behaviour of the IMF at small
+masses, which dominate the mass budget but contribute little to
+  the light. Depending on the parametrization it can be a probe of
+low-mass cutoff, and/or shape of the IMF. In
+  extreme cases, $\aimf$ can be affected by the IMF at high masses,
+  which, however, leaves an imprint not only on the mass-to-light
+  ratio, but also in other phenomena, such as metal enrichment or
+  supernovae rates. In this work, $\aimf$ is the only parameter used
+to describe the IMF of a galaxy. Throughout our analysis we identify
+the terms {\em effective IMF} and IMF normalization with this quantity.
+%{\bf The terms {\em IMF normalization}, {\em IMF mismatch} and {\em effective IMF} are used interchangeably.}
 
-In addition to the stellar mass of a galaxy, we track its halo mass $\mhalo$ and its central velocity dispersion $\sigma$.
-Stellar mass, halo mass and stellar velocity dispersion are the only quantities that enter our model.
+In addition to the stellar mass of a galaxy, we track its halo
+  mass $\mhalo$ and its central stellar velocity dispersion $\sigma$:
+  $\mtrue$, $\msalp$, $\mhalo$ and $\sigma$ are the only quantities
+  that enter our model.
 
 \subsection{The mock sample}
 
-We generate a sample of halo masses at $z=2$ drawn from the halo mass function described by \citet{Tin++08}, using an upper cut off at $\log{M_h} < 13.5M_\odot$.
-We make this cut to focus on the regime of galaxy or galaxy group scale halos, where most observational constraints on the IMF are measured \citep{Gav++07}, excluding cluster of galaxy environments \citep[though IMF constraints are available for some brightest cluster galaxies][]{New++13}.
-We then assign a Salpeter stellar mass to each halo using a stellar to halo mass relation (SHMR) from \citet{Lea++12}, including scatter.
-We make an additional cut in stellar mass keeping only galaxies with $\log{\msalp} > 10.5$ and then select a random sample of 100 objects.
-{\bf Finally we assign central velocity dispersions $\sigma$ assuming a power-law scaling with stellar mass,
+We generate a sample of 10000 halos at $z=2$ with masses drawn from the
+  halo mass function described by \citet{Tin++08}, using an upper cut
+  off at $\log{\mhalo}M_\odot < 13.5$.  We make this cut to focus on
+the regime of galaxy or galaxy group scale halos, where most
+observational constraints on the IMF are measured \citep{Gav++07},
+excluding cluster of galaxy environments \citep[though IMF constraints
+  are available for some brightest cluster galaxies;][]{New++13}.  We
+then assign a Salpeter stellar mass to each halo using the
+stellar-to-halo mass relation (SHMR) from \citet{Lea++12}, including
+scatter. 
+The \citet{Lea++12} SHMR is originally expressed in terms of stellar masses calculated assuming a Chabrier IMF. %For massive red galaxies, stellar population synthesis measurements of the stellar mass based on a Salpeter IMF $0.25$~dex larger 
+For massive red galaxies, the assumption of a Salpeter IMF in stellar population synthesis measurements produces stellar masses larger than Chabrier by $0.25$~dex, with negligible scatter \citep{Aug++10}. 
+Therefore we otain an SHMR in terms of $\msalp$ by applying the transformation
+\begin{equation}
+\log{M_*} \rightarrow \log{M_*} + 0.25
+\end{equation}
+to the \citet{Lea++12} SHMR.
+
+We make an additional cut in stellar mass keeping only
+galaxies with $\log{\msalp} > 10.5$ and then select a random sample of
+100 objects.  Finally we assign central stellar velocity dispersions
+$\sigma$ assuming a power-law scaling with stellar mass,
 \begin{equation}\label{eq:mason}
 \log{\sigma} = \log{\sigma_0} + \beta_\sigma(\log{\msalp} - 11.5), 
 \end{equation}
-with $\log{\sigma_0}=2.53$ and $\beta_\sigma=0.20$ and a scatter of $0.05$ in $\log{\sigma}$. These values have been chosen to reproduce the $M_*-\sigma$ relation measured at $z\sim0$ by \citet{Aug++10}.}
+with $\log{\sigma_0}=2.53$ and $\beta_\sigma=0.20$ and a scatter of
+$0.05$ in $\log{\sigma}$. These values are such that the evolved
+  population of mock galaxies reproduce the $\msalp-\sigma$ relation
+  measured at $z\sim0$ by \citet[][see
+    \Sref{ssec:drymerger}]{Aug++10}.
 
-\subsection{The IMF}
+\subsection{The effective IMF}
 \label{ssect:imfform}
 
-The IMF of massive galaxies has been shown to correlate with stellar velocity dispersion \citep[e.g.][]{Tre++10, CvD12, LaB++13, Spi++14, Pos++15}, stellar mass \citep{Aug++10b, Son++15}, mass-to-light ratio \citep{Cap++12} and stellar mass density \citep{Spi++15}.
-In light of these observations, we adopt a relation of the following form for assigning the IMF to our model galaxies at $z=2$:
+The effectve IMF of massive galaxies has been shown to correlate
+with stellar velocity dispersion \citep[e.g.][]{Tre++10, CvD12,
+  Cap++12, LaB++13, Spi++14, Pos++15}, stellar mass \citep{Aug++10b, Son++15},
+ and stellar-mass density
+\citep{Spi++15}.  In light of these observations, we adopt a relation
+of the following form for assigning the IMF to our model galaxies at
+$z=2$:
 \begin{equation}\label{eq:imfform}
 \log{\aimf} = a_*(\log{\msalp} - \mu_*) + a_\sigma(\log{\sigma} - \mu_\sigma) + b,
 \end{equation}
@@ -162,6 +261,7 @@ Given the current uncertainty on the true mechanism determining the IMF, the ben
 
 
 \subsection{The dry merger evolution}
+\label{ssec:drymerger}
 
 Our central galaxies are evolved to $z\sim0$ using the dry merger evolution model developed by \citet{Nip++12}, with a few modifications.
 The method can be summarized as follows.
@@ -175,40 +275,86 @@ We separate the growth in halo mass into smooth accretion and growth due to merg
 \begin{equation}\label{eq:nmerg}
 \frac{\mathrm{d}^2N_{\mathrm{merg}}}{\mathrm{d}z \mathrm{d}\xi}(z, \xi, \mhalo) = A\left(\frac{\mhalo}{10^{12}M_\odot}\right)^\alpha \xi ^\beta \exp{\left[\left(\frac{\xi}{\tilde{\xi}}\right)^\gamma\right]}(1 + z)^{\eta'},
 \end{equation}
-which describes the number of mergers between halos of mass ratio $\xi$ per unit redshift interval.
-Following \citet{FMB10}, we assume $A=0.0104$, $\tilde{\xi}=9.72\times10^{-3}$, $\alpha=0.133$, $\beta=-1.995$, $\gamma=0.263$ and $\eta'=0.0993$.
-At each timestep $dz$, the change in halo mass due to mergers is then the following integral over mergers of different halo mass ratios $\xi$,
+which describes the number of mergers between halos of mass ratio
+$\xi$ per unit redshift interval.  Following \citet{FMB10}, we assume
+$A=0.0104$, $\tilde{\xi}=9.72\times10^{-3}$, $\alpha=0.133$,
+$\beta=-1.995$, $\gamma=0.263$ and $\eta'=0.0993$.  At each timestep
+$\d z$, the change in halo mass due to mergers is then the integral
+over mergers of different halo mass ratios $\xi$,
 \begin{equation}
 \left[\frac{\mathrm{d}\mhalo}{\mathrm{d}z}\right]_{\mathrm{merg}} = -\int_{\ximin}^1 \mhalo\xi \frac{\mathrm{d}^2N_{\mathrm{merg}}}{\mathrm{d}z \mathrm{d}\xi} d\xi.
 \end{equation}
-We are assuming that only mergers with mass ratio larger than a minimum value $\ximin$ contribute. This minimum value is set by the merging time-scale: mergers with very small values of $\xi$ have merging time-scales larger than the age of the Universe and therefore cannot contribute to the accreted mass. We fixed $\ximin=0.03$ following \citet{Nip++12}. We tested for the impact of this choice on our study by varying $\ximin$ between $0.01$ and $0.1$, finding very minimal differences in all the results.
+We are assuming that only mergers with mass ratio larger than a
+minimum value $\ximin$ contribute. This minimum value is set by the
+merging time-scale: mergers with very small values of $\xi$ have
+merging time-scales longer than the age of the Universe and therefore
+cannot contribute to the accreted mass. We fixed $\ximin=0.03$
+following \citet{Nip++12}. We tested for the impact of this choice on
+our study by varying $\ximin$ between $0.01$ and $0.1$, finding
+minimal differences in all the results.
 
-We then calculate the growth in Salpeter stellar mass assuming that each accreted halo is associated with a stellar mass given by the (redshift dependent) SHMR of \citet{Lea++12}, and that this stellar mass is also accreted by the central galaxy:
+We then calculate the growth in Salpeter stellar mass assuming that
+each accreted halo is associated with a Salpeter stellar mass
+  given by the (redshift dependent) SHMR of \citet{Lea++12}, and that this stellar
+mass is also accreted by the central galaxy:
 \begin{equation}
-\frac{\mathrm{d}\msalp}{\mathrm{d}z} = \int_{\ximin}^1 \mathcal{R}_{*,h}(\xi \mhalo, z)\xi\mhalo\frac{\mathrm{d}^2N_{\mathrm{merg}}}{\mathrm{d}z \mathrm{d}\xi} d\xi,
+\frac{\mathrm{d}\msalp}{\mathrm{d}z} = -\int_{\ximin}^1 \mathcal{R}_{*,h}(\xi \mhalo, z)\xi\mhalo\frac{\mathrm{d}^2N_{\mathrm{merg}}}{\mathrm{d}z \mathrm{d}\xi} d\xi,
 \end{equation}
-where $\mathcal{R}_{*,h}$ is the SHMR. With this equation we are assuming that each merger event brings in exactly the average amount of stellar mass for its halo mass: in other words we are neglecting scatter in the merger history.
+where
+$\mathcal{R}_{*,h}$ is the SHMR. With this equation we are assuming
+that each merger event brings in exactly the average amount of stellar
+mass for its halo mass: in other words we are neglecting scatter
+  in the SHMR of the accreted satellites.
 
-Each merger, in addition to increasing the mass of the galaxy, contributes to modify its velocity dispersion. Using the virial theorem under the assumption of parabolic orbits, \citet{NJO09} showed that the ratio between the {\em virial} velocity dispersion after and before a merger event of mass ratio $\xi$ is given by
+Each merger, in addition to increasing the mass of the galaxy,
+contributes to modify its velocity dispersion. Using the virial
+theorem under the assumption of parabolic orbits, \citet{NJO09} showed
+that the ratio between the {\em virial} velocity dispersion after and
+before a merger event of mass ratio $\xi$ is given by
 \begin{equation}
 \frac{\sigma_{v,f}^2}{\sigma_{v,i}^2} = \frac{1 + \xi\epsilon}{1 + \xi},
 \end{equation}
-where $\epsilon = \sigma_{v,a}^2/\sigma_{v,i}^2$ is the ratio between the velocity dispersion of the accreted object and that of the central galaxy, squared.
-We then make the assumption that the stellar velocity dispersion of central and satellite are proportional to their virial velocity $\sigma \propto \sigma_v$, through which we can write the change in stellar velocity dispersion due to mergers as
+where $\epsilon = \sigma_{v,a}^2/\sigma_{v,i}^2$ is the ratio between
+the velocity dispersion of the accreted object and that of the central
+galaxy, squared.  When $\epsilon<1$ (as expected when $\xi<1$),
+  $\sigma_{v,f}<\sigma_{v,i}$, so the velocity dispersion is expected
+  to decrease as a consequence of a gas-poor, parabolic minor
+  merger. We make the assumption that, for both the central and the
+  satellite galaxies, the stellar velocity dispersion is proportional
+  to their virial velocity dispersion $\sigma \propto \sigma_v$, so we
+  can write the change in stellar central velocity dispersion due to
+  mergers as
 \begin{equation}
-\frac{\mathrm{d}^2\sigma^2}{\mathrm{d}z\mathrm{d}\xi} = \sigma^2\left[\frac{1 + \xi\epsilon}{1 + \xi} - 1\right]\frac{\mathrm{d}^2N_{\mathrm{merg}}}{\mathrm{d}z \mathrm{d}\xi}.
+\frac{\mathrm{d}^2\sigma^2}{\mathrm{d}z\mathrm{d}\xi} = \sigma^2\left[1-\frac{1 + \xi\epsilon}{1 + \xi}\right]\frac{\mathrm{d}^2N_{\mathrm{merg}}}{\mathrm{d}z \mathrm{d}\xi}.
 \end{equation}
-We describe the velocity dispersion of the satellites with a relation between stellar mass and $\sigma$ of the form given by \Eref{eq:mason}, with no scatter. The values of the coefficients $\sigma_0$ and $\beta_\sigma$ are determined by fitting \Eref{eq:mason} to the $\msalp-\sigma$ relation of the central galaxies, and are updated at each timestep as the centrals evolve.
-{\bf In \Fref{fig:vdisp} we show the distribution in velocity dispersion of the mock galaxies as a function of stellar mass, at $z=0.2$ and $z=2$. We compare these values with the low-$z$ observations from \citet{Aug++10} and the constraints at $z=2$ inferred by \citet{Mas++15}.
-Our model tends to slightly overpredict the velocity dispersions for a given stellar mass with respect to the value measured by \citet{Mas++15}. The effects of this possible discrepancy on the results of this work are discussed in the following sections.}
+We
+describe the velocity dispersion of the satellites with a relation
+between stellar mass and $\sigma$ of the form given by
+\Eref{eq:mason}, with no scatter. The values of the coefficients
+$\sigma_0$ and $\beta_\sigma$ are determined by fitting
+\Eref{eq:mason} to the $\msalp-\sigma$ relation of the central
+galaxies, and are updated at each timestep as the centrals evolve.  In
+\Fref{fig:vdisp} we show the distribution in velocity dispersion of
+the mock galaxies as a function of stellar mass, at $z=0.2$ and
+$z=2$. We compare these values with the low-$z$ observations from
+\citet{Aug++10} and the constraints at $z=2$ inferred by
+\citet{Mas++15}. Our model tends to overpredict the velocity
+  dispersions for a given stellar mass with respect to the values
+  measured by \citet{Mas++15}. The effects of this possible
+discrepancy on the results of this work are discussed in the following
+sections.
 %
 \begin{figure}
  \includegraphics[width=\columnwidth]{mstar-vdisp_evolution.eps}
- \caption{ 
-Velocity dispersion as a function of stellar mass of the ``$M_*$ model'' mock sample (the ``$\sigma$ sample'' is indistinguishable), at $z=0.2$ ({\em red circles}) and $z=2$ ({\em blue squares}).
-{\em Dashed line:} best-fit $M_*-\sigma$ relation measured by \citet{Aug++10} on a sample of strong lens early-type galaxies.
-{\em Blue line:} best-fit $M_*-\sigma$ relation inferrerd by \citet{Mas++15} for $z=2$ massive galaxies. The $68\%$ confidence region is marked by the shaded region.
-}
+ \caption{ Velocity dispersion as a function of stellar mass of
+     the ``$M_*$ model'' mock sample (the ``$\sigma$ sample'' behaves
+     similarly), at $z=0.2$ ({\em red circles}) and $z=2$ ({\em blue
+     squares}).  {\em Dashed line:} best-fit $\msalp-\sigma$ relation
+   measured by \citet{Aug++10} on a sample of strong lens early-type
+   galaxies.  {\em Blue line:} $\msalp-\sigma$ relation
+   at $z=2$ inferred by \citet{Mas++15}. 
+   The $68\%$
+   confidence region is marked by the shaded region.}
  \label{fig:vdisp}
 \end{figure}
 %
@@ -216,18 +362,37 @@ Velocity dispersion as a function of stellar mass of the ``$M_*$ model'' mock sa
 Finally, we need to describe the growth in true stellar mass for our centrals, which in turn requires to define the IMF of the accreted satellites.
 Similarly to the velocity dispersion case, we assign the IMF of satellites using \Eref{eq:imfform}, where the coefficients are determined at each timestep by fitting the distribution of IMF as a function of stellar mass and velocity dispersion of the centrals.
 
-We do not keep track of the spatial distribution of stars within our galaxies. Although observations could in principle detect spatial variations in IMF within a galaxy \citep{Mar++15}, {\bf provided that metallicity gradients are accurately accounted for \citep{MLM16}}, and put interesting constraints on IMF differences between the in-situ population and that of the accreted stars, that is left for future work.
+We do not keep track of the spatial distribution of stars within our galaxies. Although observations could in principle detect spatial variations in IMF within a galaxy \citep{Mar++15}, provided that metallicity gradients are accurately accounted for \citep{MLM16}, and put interesting constraints on IMF differences between the in-situ population and that of the accreted stars, that is left for future work.
 
 
 \section{Reference IMF measurements}\label{sect:obs}
 
-The main goal of this work is to make predictions on the distribution of the IMF in massive galaxies as a function of redshift, using low-redshift observations as a reference point.
-{\bf To ensure self-consistency when comparing with results at high redshift}, we choose the IMF measurements from \citet[][hereafter S15]{Son++15} to be such reference point.
-In this Section we summarize the main results of that work and carry out some additional analysis needed in order to calibrate our models to the observations.
+The main goal of this work is to make predictions on the distribution
+of the IMF in massive galaxies as a function of redshift, using
+low-redshift observations as a reference point. 
+We choose the IMF measurements from \citet[][hereafter S15]{Son++15} to
+be such reference point.
+%To ensure
+%self-consistency when comparing with results at high redshift {\bf
+%  [CN: not clear why choosing S15 implies self-consistency]}, we
+%choose the IMF measurements from \citet[][hereafter S15]{Son++15} to
+%be such reference point.  
+In this Section we summarize the main
+results of that work and carry out some additional analysis needed in
+order to calibrate our models to the observations.
 
-S15 measured the stellar IMF for a sample of 80 early-type galaxies using strong lensing in combination with velocity dispersion data to constrain the stellar mass $\mtrue$ of each object.
-Measurements of $\aimf$ for individual objects are very noisy. To cope with the low signal-to-noise of individual measurements S15 combined them with a hierarchical Bayesian inference approach, in which they modeled the distribution of IMF normalization of the population of massive galaxies as a Gaussian and allowed the mean of such Gaussian to be a function of redshift, stellar mass and projected stellar mass density.
-The analysis yielded the detection of a positive trend between the effective IMF and stellar mass and no detection of a dependence on redshift or stellar mass density.
+S15 measured the effective stellar IMF for a sample of 80
+early-type galaxies using strong lensing in combination with velocity
+dispersion data to constrain the stellar mass $\mtrue$ of each object.
+Measurements of $\aimf$ for individual objects are very noisy. To cope
+with the low signal-to-noise of individual measurements S15 combined
+them with a hierarchical Bayesian inference approach, in which they
+modeled the distribution of IMF normalization of the population of
+massive galaxies as a Gaussian and allowed the mean of such Gaussian
+to be a function of redshift, stellar mass and projected stellar mass
+density.  The analysis yielded the detection of a positive trend
+between the effective IMF and stellar mass and no detection of a
+dependence on redshift or stellar mass density.
 
 The S15 analysis did not explore dependences between velocity dispersion and IMF, which we consider in our model.
 Moreover, the relations between stellar mass and IMF explored by S15 were based on $\mtrue$, instead of $\msalp$.
@@ -235,187 +400,418 @@ For this reason we re-analyse here the S15 sample and fit for a dependence of th
 \begin{equation}\label{eq:sl2sfit}
 a_z(z - 0.3) + a_*(\log{\msalp} - 11.5) + a_\sigma(\log{\sigma} - 2.4) + \log{\alpha_{\mathrm{IMF},0}}
 \end{equation}
-and dispersion $s$. We fit for the parameters $a_z$, $a_*$, $a_\sigma$, $\alpha_{\mathrm{IMF},0}$ and $s$ using a similar hierarchical Bayesian inference method as the one used by S15.
-Details of the fitting procedure are given in the Appendix.
-{\bf The main assumptions of this model are: a fixed Navarro Frenk and White \citep{NFW} shape for the dark matter distribution, spatially constant mass to-light-ratio and isotropic orbits for the stars.}
+and dispersion $s$. 
+The pivot points $z=0.3$, $\log{\msalp}=11.5$ and $\log{\sigma}=2.4$ are very close to the median values of the corresponding quantities in the S15 sample. This allows us to minimize the covariance in the inference of the paramteres $a_z$ $a_*$ and $a_\sigma$.
+%
+We fit for $a_z$,
+$a_*$, $a_\sigma$, $\alpha_{\mathrm{IMF},0}$ and $s$ using a similar
+hierarchical Bayesian inference method as the one used by S15.
+Details of the fitting procedure are given in the Appendix.  The main
+assumptions of this model are: a fixed Navarro Frenk and White
+\citep{NFW97} shape for the dark-matter distribution, a de Vaucouleurs \citep{deV48} profile with spatially constant
+mass to-light-ratio and isotropic velocity distribution
+for the stars.  
 
-In \Fref{fig:sl2scorner} we plot the posterior probability distribution for the parameters describing the IMF, marginalized over the other model parameters (which include parameters describing the dark matter distribution).
+In \Fref{fig:sl2scorner} we plot the posterior probability distribution for the parameters describing the IMF, marginalized over the other model parameters (which include parameters describing the dark-matter distribution).
 %
 \begin{figure*}
  \includegraphics[width=\textwidth]{imf_pars_nfw_msps_sigma.eps}
- \caption{Posterior probability distribution of parameters describing the efective IMF of early-type galaxies, measured by fitting lensing and stellar kinematics observations of the S15 sample. Different levels represent the 68\%, 95\% and 99.7\% enclosed probability regions.
-}
+ \caption{Posterior probability distribution of parameters describing
+   the efective IMF of early-type galaxies, measured by fitting
+   lensing and stellar kinematics observations of the S15 sample
+   (\Fref{eq:sl2sfit}). Different levels represent the 68\%, 95\% and
+   99.7\% enclosed probability regions.}
  \label{fig:sl2scorner}
 \end{figure*}
 %
-Consistently with the S15 analysis, we find an average IMF normalization slightly heavier than a Salpeter IMF ($\log{\alpha_{\mathrm{IMF},0}} = 0.06\pm0.02$). There is a strong degeneracy between the parameters $a_*$ and $a_\sigma$, meaning that the data can be described either with a dependence of the IMF on stellar mass or on velocity dispersion. This degeneracy is a consequence of the tight correlation between stellar mass and velocity dispersion in early-type galaxies.
-Nevertheless the data, {\bf under the assumptions specified above and discussed in \Sref{sect:appendix}}, exclude a Universal IMF at the $3-\sigma$ level and show a trend of increasing IMF normalization with increasing mass and/or velocity dispersion.
+Consistently with the S15 analysis, we find an average IMF
+normalization slightly heavier than a Salpeter IMF
+($\log{\alpha_{\mathrm{IMF},0}} = 0.06\pm0.02$). There is a strong
+degeneracy between the parameters $a_*$ and $a_\sigma$, meaning that
+the data can be described either with a dependence of the IMF on
+stellar mass or on velocity dispersion. This degeneracy is a
+consequence of the tight correlation between stellar mass and velocity
+dispersion in early-type galaxies.  Nevertheless the data, under the
+assumptions specified above and discussed in
+Appendix~\ref{sect:appendix}, exclude a Universal IMF at the
+$3-\sigma$ level and show a trend of increasing IMF normalization with
+increasing mass and/or velocity dispersion.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Results}\label{sect:results}
 
-We evolved our mock population of galaxies from $z=2$ to $z=0.3$, the redshift at which lensing constraints on the IMF are most robust.
-In \Fref{fig:snap} we plot the IMF mismatch parameter for our mock sample of galaxies at three different redshifts ($z=2$, $z=1$ and $z=0.3$), as a function of stellar mass and velocity dispersion, for each model.
-%At each redshift snapshot we fit \Eref{eq:mstarmodel} and \Eref{eq:sigmamodel} to the mock data with a least-squares method. Best-fit curves are overplotted in \Fref{fig:snap}.
+\subsection{Evolution of the $\aimf$-$\msalp$ and $\aimf$-$\sigma$ relations}
+
+We evolved our mock population of galaxies from $z=2$ to $z=0.3$, the
+median redshift of the S15 sample and the redshift at which lensing constraints on the IMF are most robust. In \Fref{fig:snap} we
+plot the IMF mismatch parameter for our mock sample of galaxies at
+three different redshifts ($z=2$, $z=1$ and $z=0.3$), as a function of
+stellar mass and velocity dispersion, for each model.
+At each redshift snapshot and for each model we fit for a power-law dependence of the IMF on stellar mass 
+%
+\begin{equation}\label{eq:mstarmodel}
+\log{\aimf} = c_*(\log{\msalp} - 11.5) + d_*
+\end{equation}
+%
+and velocity dispersion
+%
+\begin{equation}\label{eq:sigmamodel}
+\log{\aimf} = c_\sigma(\log{\msalp} - 2.4) + d_\sigma.
+\end{equation}
+%
+Best-fit curves are overplotted in \Fref{fig:snap} and values of the parameters are reported in \Tref{tab:oneparfit}.
 %
 \begin{figure*}
  \includegraphics[width=\textwidth]{snapshots.eps}
- \caption{ IMF mismatch parameter $\aimf$ as a function of stellar mass ({\em left panels}) and central velocity dispersion ({\em right panels}) for the ``$M_*$ model'' ({\em top panels}) and ``$\sigma$ model'' ({\em bottom panels}) IMF recipes, at three different redshifts.
-{\em Solid lines:} Evolutionary tracks between $z=2$ and $z=0.3$ of a few representative galaxies.
-{\em Dashed lines:} Linear fit to the data in each redshift snapshot.
-{\em Shaded regions:} Observational constraints from \Sref{sec:data}, obtained using data from S15 at $z=0.3$.
-}
+ \caption{ IMF mismatch parameter $\aimf$ as a function of stellar
+   mass ({\em left panels}) and central velocity dispersion ({\em
+     right panels}) for the ``$M_*$ model'' ({\em top panels}) and
+   ``$\sigma$ model'' ({\em bottom panels}) IMF recipes, at $z=2$,
+   $z=1$ and $z=0.3$.  {\em Solid lines:} Evolutionary tracks between
+   $z=2$ and $z=0.3$ of a few representative galaxies.  {\em Dashed
+     lines:} fit of \Eref{eq:mstarmodel} and \Eref{eq:sigmamodel} to the data in each redshift snapshot. {\em
+     Shaded regions:} Observational constraints from \Sref{sect:obs},
+   obtained using data from S15 at $z=0.3$.   }
  \label{fig:snap}
 \end{figure*}
 %
-%\begin{table}
-% \caption{Best-fit parameters of \Eref{eq:mstarmodel} and \Eref{eq:sigmamodel} to the mock data shown in \Fref{fig:snap}. The third number in each set represents the residual scatter around the best fit relation.}
-% \label{tab:oneparfit}
-% \begin{tabular}{lcc}
-% \hline
-% Data set & Eq. \ref{eq:mstarmodel} fit & Eq. \ref{eq:sigmamodel} fit\\
-% & $(a_*, b_*, s_*)$ & $(a_\sigma, b_\sigma, s_\sigma)$ \\
-% \hline
-% ``$M_*$ model'', $z=2$ & $(0.35, 0.07, 0.)$ & (2., -0.1, 0.1) \\
-% \input{table1.tex}
-% \hline
-% \end{tabular}
-%\end{table}
 %
-As can be seen by comparing the left hand panels in \Fref{fig:snap} with the right hand panels, correlations between IMF and stellar mass correspond to similar correlations with velocity dispersion and vice-versa. This is again a consequence of the tight correlation between galaxy stellar mass and velocity dispersion in the mock sample (and in observations). 
-By looking at the redshift evolution of our mock samples we can see that the IMF normalization of individual objects decreases with time. This can be easily understood: central galaxies grow by merging with smaller objects with, by construction, have a lighter IMF and therefore bring the effective IMF of the post-merger galaxy towards smaller values.
+\begin{table}
+ \caption{Best-fit parameters of \Eref{eq:mstarmodel} and \Eref{eq:sigmamodel} to the mock data shown in \Fref{fig:snap}. The third number in each set represents the residual scatter around the best fit relation.}
+ \label{tab:oneparfit}
+ \begin{tabular}{lcc}
+ \hline
+ Data set & Eq. \ref{eq:mstarmodel} fit & Eq. \ref{eq:sigmamodel} fit\\
+ & $(c_*, d_*, s_*)$ & $(c_\sigma, d_\sigma, s_\sigma)$ \\
+ \hline
+ \input{table1.tex}
+ \hline
+ \end{tabular}
+\end{table}
+%
+
+As can be seen by comparing the left hand panels in \Fref{fig:snap}
+with the right hand panels, correlations of the effective IMF
+  with stellar mass correspond to similar correlations with velocity
+  dispersion and vice-versa. This is again a consequence of the
+  relatively tight correlation between galaxy stellar mass and
+velocity dispersion in the mock sample (and in observations;
+\Fref{fig:vdisp}).  By looking at the redshift evolution of our mock
+samples we can see that the IMF normalization of individual objects
+decreases with time. This can be easily understood: central galaxies
+grow by merging with smaller objects which, by construction, have a
+lighter IMF and therefore bring the effective IMF of the post-merger
+galaxy towards smaller values.  Focusing on the left-hand side of
+\Fref{fig:snap} one can also notice how the most massive galaxies
+experience the largest decrease in IMF normalization. As a result, the
+correlation between stellar mass and effective IMF becomes shallower
+with time (the coefficient $c_*$ in \Eref{eq:mstarmodel} decreases with time). The reason for this tilt will be discussed in
+\Sref{sect:discuss}.  %In contrast, the right hand side of
+%\Fref{fig:snap} shows how individual galaxies evolve roughly in the
+%same direction as the $z=2$ correlation between velocity dispersion
+%and and IMF, preserving the original correlation down to $z=0.3$.
+A similar trend is seen for the correlation between $\sigma$ and $\aimf$ in the ``$\sigma$ model'' (bottom right panel of \Fref{fig:snap}), becoming shallower with time. In contrast, for the ``$M_*$ model'' the original correlation between velocity dispersion and IMF is roughly preserved by dry mergers.
+
+
 %Trends of $\aimf$ with stellar mass and velocity dispersion, which we assumed in place at $z=2$, are mostly preserved by dry mergers down to $z=0.3$, but become less steep with time.
-Focusing on the left hand side of \Fref{fig:snap} one can also notice how the most massive galaxies experience the largest decrease in IMF normalization. As a result, the correlation between stellar mass and effective IMF becomes shallower with time. The reason for this tilt will be discussed in \Sref{sect:discuss}.
-In contrast, the right hand side of \Fref{fig:snap} shows how individual galaxies evolve roughly in the same direction as the $z=2$ correlation between velocity dispersion and and IMF, preserving the original correlation down to $z=0.3$.
 
-While the mean trends between stellar mass or velocity dispersion and stellar IMF evolve very similarly for both models examined here, the two models differ in terms of scatter around these correlations.
-The ``$M_*$ model'' is initialized with zero scatter around the $M_*-\aimf$ relation, but by $z=1$ a substantial scatter is introduced.
-For the ``$\sigma$ model'' however the relation between $\aimf$ and $\sigma$ in place at $z=2$ remains remarkably tight down to $z=0.3$.
-This is a consequence of the different direction of the evolutionary tracks in $M_*-\aimf$ and $\sigma-\aimf$ space. Objects evolve roughly perpendicular to the $M_*-\aimf$ relation, quickly introducing scatter, while as discussed above the $\sigma-\aimf$ relation is mostly preserved due to the coincidence between direction of evolution and correlation in $\sigma-\aimf$ space.
-{\bf 
-This prediction depends critically on our model for the evolution of the velocity dispersion with dry mergers, based on the assumption of parabolic orbits for the accreted satellites, which predicts steadily declining values of $\sigma$ with time. 
-Dark matter-only cosmological simulations show that the parabolic orbit approximation tends on average to underestimate the post-merger velocity dispersion \citep{Pos++14}.
+
+While the mean trends between stellar mass or velocity dispersion and
+stellar IMF evolve very similarly for both models examined here, the
+two models differ in terms of scatter around these correlations.  The
+``$M_*$ model'' is initialized with zero scatter around the
+$\msalp-\aimf$ relation, but by $z=1$ a substantial scatter is
+introduced.  For the ``$\sigma$ model'' however the relation between
+$\aimf$ and $\sigma$ in place at $z=2$ remains remarkably tight down
+to $z=0.3$.  This is a consequence of the different direction of the
+evolutionary tracks in $\msalp-\aimf$ and $\sigma-\aimf$ space. Objects
+evolve roughly perpendicular to the $\msalp-\aimf$ relation, quickly
+introducing scatter, while as discussed above the $\sigma-\aimf$
+relation is mostly preserved due to the coincidence between direction
+of evolution and correlation in $\sigma-\aimf$ space.  This prediction
+depends critically on our model for the evolution of the velocity
+dispersion with dry mergers, based on the assumption of parabolic
+orbits for the accreted satellites, which predicts steadily
+  declining values of $\sigma$ with time for individual galaxies.
+Dark matter-only cosmological simulations show that the parabolic
+orbit approximation tends on average to underestimate the post-merger
+velocity dispersion \citep{Pos++14}.  For instance, in the simple
+  case in which $\sigma$ remains constant after each merger, objects
+  would move vertically in the $\sigma-\aimf$ plane, qualitatively
+  changing the right hand panels of \Fref{fig:snap}.
+
 %If the parabolic orbit approximation is dropped the velocity dispersion can decline at a slower rate or even increase as a result of dry mergers \citep{Pos++14}. 
-In the extreme case in which $\sigma$ stays constant with dry mergers, objects would move vertically in the $\sigma-\aimf$ plane, qualitatively changing the right hand panels of \Fref{fig:snap}.
-}
 
-\Fref{fig:snap} only shows how the parameters $M_*$ and $\sigma$ correlate {\em individually} with the IMF.
+
+\subsection{Evolution of the mock galaxies in the $\aimf$-$\msalp$-$\sigma$ space}
+
+\Fref{fig:snap} only shows how the parameters $\msalp$ and $\sigma$
+correlate {\em individually} with the effective IMF.  We now examine
+simultaneous dependences of the IMF on stellar mass and velocity
+dispersion, that is how $\aimf$ scales with $\msalp$ at fixed $\sigma$
+and viceversa.  For each mock sample at each timestep we determine the
+average of the logarithm of the stellar mass and velocity dispersion,
+$\mu_*(z)$ and $\mu_\sigma(z)$, then fit \Eref{eq:imfform} to the IMF
+distribution and plot the measured coefficients $a_*$ and $a_\sigma$
+in \Fref{fig:tracks}.
+
 %We now examine the quantity between $M_*$ and $\sigma$ the IMF correlates more strongly with for the two models.
-{\bf We now examine simultaneous dependences of the IMF on stellar mass and velocity dispersion, that is how $\aimf$ scales with $M_*$ at fixed $\sigma$ and viceversa.}
-For each mock sample at each timestep we determine the average stellar mass and velocity dispersion, $\mu_*(z)$ and $\mu_\sigma(z)$, then fit \Eref{eq:imfform} to the IMF distribution and plot the measured coefficients $a_*$ and $a_\sigma$ in \Fref{fig:tracks}.
 %
+
 \begin{figure}
  \includegraphics[width=\columnwidth]{tracks.eps}
- \caption{ 
-Coefficients $a_*$ and $a_\sigma$, describing the dependence of the effective IMF on stellar mass and velocity dispersion, obtained by fitting \Eref{eq:imfform} to mock data generated with the ``$M_*$ model'' and ``$\sigma$ model'' prescriptions at each timestep.
-The shaded region marks the observational constraint at $z=0.3$ obtained in \Sref{sect:obs} from S15 data.
+ \caption{Coefficients $a_*$ and $a_\sigma$, describing the dependence
+   of the effective IMF on stellar mass and velocity dispersion,
+   obtained by fitting \Eref{eq:imfform} to mock data generated with
+   the ``$M_*$ model'' and ``$\sigma$ model'' prescriptions at each
+   timestep.  The shaded region marks the observational constraint at
+   $z=0.3$ obtained in \Sref{sect:obs} from S15 data. 
+   Different contours mark regions of 68\%, 95\% and 99.7\% enclosed probability.
 }
  \label{fig:tracks}
 \end{figure}
 %
-{\bf
-The starting ($z=2$) point in the $a_*-a_\sigma$ space is by construction very different for the two mock sets. 
-For the ``$M_*$ model'' the initial dependence on stellar mass is in part converted into a dependence on velocity dispersion as a result of dry mergers.
-By contrast, the coefficients describing the $\sigma$ model at $z=0.3$ are very close to the $z=2$ values. The initial dependence of the IMF on velocity dispersion becomes slightly weaker while no significant dependence on stellar mass (at fixed velocity dispersion) is introduced. This is a result of dry mergers preserving the tight correlation between $\sigma$ and IMF, apparent in the bottom right panel of \Fref{fig:snap}.
-As discussed above, this prediction relies in turn on the assumed evolution of the velocity dispersion. If we allow for a milder decline in velocity dispersion with dry mergers we observe a more significant mixing between stellar mass and velocity dispersion dependece of the IMF, the red dot corresponding to the ``$\sigma$ model'' in \Fref{fig:tracks} approaching the corresponding dot of the ``$M_*$ model''.
-}
+The starting ($z=2$) point in the $a_*-a_\sigma$ space is by
+construction very different for the two mock sets.  For the ``$M_*$
+model'' the initial dependence on stellar mass is in part converted
+into a dependence on velocity dispersion as a result of dry mergers.
+By contrast, the coefficients describing the $\sigma$ model at $z=0.3$
+are very close to the $z=2$ values. The initial dependence of the IMF
+on velocity dispersion becomes slightly weaker while no significant
+dependence on stellar mass (at fixed velocity dispersion) is
+introduced. This is a result of dry mergers preserving the tight
+correlation between $\sigma$ and $\aimf$, apparent in the bottom right
+panel of \Fref{fig:snap}.  As discussed above, this prediction relies
+in turn on the assumed evolution of the velocity dispersion. If we
+allow for a milder decline in velocity dispersion with dry mergers we
+observe a more significant mixing between stellar mass and velocity
+dispersion dependece of the IMF, the red dot corresponding to the
+``$\sigma$ model'' in \Fref{fig:tracks} approaching the corresponding
+dot of the ``$M_*$ model''.
+
  
 
 %At $z=0.3$ the coefficients describing the $\sigma$ model are very close to the $z=2$ values. The initial dependence of the IMF on velocity dispersion becomes slightly weaker while no significant dependence on stellar mass (at fixed velocity dispersion) is introduced. This is a result of dry mergers preserving the tight correlation between $\sigma$ and IMF apparent in the bottom right panel of \Fref{fig:snap}.
 %By contrast for the ``$M_*$ model'' the initial dependence on stellar mass is in part converted into a dependence on velocity dispersion as a result of dry mergers.
 
-{\bf 
-Finally we examine how the IMF normalization at fixed $\msalp$ and $\sigma$ of the mock sample evolves in time and compare it with the measurements presented in \Sref{sect:obs}.
-The observational constraints on $\aimf$ from the analysis of S15 data are tightest at the pivot point of \Eref{eq:sl2sfit}, $\log{\msalp} = 11.5$ and $\log{\sigma} = 2.4$, therefore we carry out the comparison with the model at this point in the $\msalp-\sigma$ space.
-We evaluate \Eref{eq:imfform} at $\log{\msalp} = 11.5$ and $\log{\sigma} = 2.4$ at each timestep for the two models, then plot the corresponding value of $\log{\aimf}$ in \Fref{fig:bevol}. 
-In the same plot we show the observational constraints from S15 data obtained by evaluating \Eref{eq:sl2sfit} at each redshift between $z=0$ and $z=0.8$, redshift above which there are no objects in the S15 sample.
-At $z=0.3$ the two models are, by construction, coincident with the observational band. The models then diverge at higher redshift and at $z=2$ they differ by $\sim 0.17$ dex in $\aimf$.
-Since the average IMF normalization of the two mock samples (parameter $b$ in \Eref{eq:imfform}) is nearly identical at all times, as can be seen by comparing top and bottom panels of \Fref{fig:snap}, 
-the reason for this divergence lies in the difference between the coefficients $a_*$ and $a_\sigma$ for the two models.
-At redshifts above $z=0.3$ the average stellar mass and velocity dispersion of the samples depart from the pivot point chosen for the comparison, reaching $\mu_*=11.18$ and $\mu_\sigma=2.47$ at $z=2$.
-This translates in different extrapolations of \Eref{eq:imfform} from the sample average to the pivot point $\log{\msalp}=11.5$ and $\log{\sigma}=2.4$ for the two models.
-We see a $2-\sigma$ discrepancy between both models and the S15 constraints.
+\subsection{Predicted redshift evolution of the average IMF normalization and comparison with observations}
 
-We then compare our models with several sets of measurements from the literature.
-For consistency with the analysis described above we should in principle compare the model with the IMF normalization inferred for galaxies at $\log{\msalp}=11.5$ and $\log{\sigma}=2.4$.
-However there are no studies in which the IMF is described in terms of both stellar mass and velocity dispersion, as trends of the IMF are tipically reported in terms of velocity dispersion alone.
-In such cases we simply plot the value of $\aimf$ inferred for galaxies at $\log{\sigma}=2.4$.
-For observational sets that are too small in size even to derive a trend between IMF and $\sigma$ we instead use the values of $a_*$ and $a_\sigma$ measured in \Sref{sect:obs} for the S15 sample to correct those measurements to the pivot point.
 
-\citet{CvD12} constrained the IMF of a sample of nearby massive ellipticals by fitting stellar population models to spectral indices sensitive to the abundance of low-mass stars. They found a trend between IMF slope, and normalization, and stellar velocity dispersion. We took their measurements of the IMF normalization, expressed in terms of mass-to-light ratio differences with respect to a Kroupa IMF, converted them to our definition of $\aimf$, then fitted for a power-law dependence between $\aimf$ and $\sigma$ and plotted the value inferred at $\log{\sigma}=2.4$ in \Fref{fig:bevol}.
-Using a similar technique, \citet{Spi++14} constrained the IMF of low redshift early-type galaxies by fitting stellar population models to a large sample of Sloan Digital Sky Survey spectra.
-They measured a positive trend between IMF normalization and galaxy velocity dispersion. In \Fref{fig:bevol} we plot the value of $\aimf$ inferred by \citet{Spi++14} for galaxies at $\log{\sigma} = 2.4$.
+Finally we examine how the IMF normalization at fixed $\msalp$ and
+$\sigma$ of the mock sample evolves in time and compare it with the
+measurements presented in \Sref{sect:obs}.  The observational
+constraints on $\aimf$ from the analysis of S15 data are tightest at
+the pivot point of \Eref{eq:sl2sfit}, $\log{\msalp} = 11.5$ and
+$\log{\sigma} = 2.4$, where uncertainties on the parameters $a_*$ and $a_\sigma$ do not propagate on $\aimf$. Therefore we carry out the comparison with the
+model at this point in the $\msalp-\sigma$ space.  We evaluate
+\Eref{eq:imfform} at $\log{\msalp} = 11.5$ and $\log{\sigma} = 2.4$ at
+each timestep for the two models, then plot the corresponding value of
+$\log{\aimf}$ in \Fref{fig:bevol}.  In the same plot we show the
+observational constraints from S15 data obtained by evaluating
+\Eref{eq:sl2sfit} at each redshift between $z=0$ and $z=0.8$, redshift
+above which there are no objects in the S15 sample.  At $z=0.3$ the
+two models are, by construction, coincident with the observational
+band. The models then diverge at higher redshift and at $z=2$ they
+differ by $\sim 0.17$ dex in $\aimf$.  
+%
+Since the average IMF
+normalization of the two mock samples (parameter $b$ in
+\Eref{eq:imfform}) is nearly identical at all times, as can be seen by
+comparing top and bottom panels of \Fref{fig:snap}, the reason for this divergence lies in the difference
+between the coefficients $a_*$ and $a_\sigma$ for the two models.  At
+redshifts above $z=0.3$ the average stellar mass and velocity
+dispersion of the samples depart from the pivot point chosen for the
+comparison, reaching $\mu_*=11.18$ and $\mu_\sigma=2.47$ at $z=2$ in both models.  This translates in different
+extrapolations of \Eref{eq:imfform} from the sample average to the
+pivot point $\log{\msalp}=11.5$ and $\log{\sigma}=2.4$ for the two
+models.  We see a $2-\sigma$ discrepancy between both models and the
+S15 constraints. 
 
-These are all low-redshift measurements, plotted with the purpose of estimating the systematic uncertainty in the determination of $\aimf$ with different techniques.
-At higher redshift, \citet{S+C14} constrained the IMF of 68 galaxies at $z\sim0.75$ from dynamical modeling of single aperture stellar kinematics data. %The median velocity dispersion of the \citet{S+C14} sample is $\sim 200~\rm{km\,}\rm{s}^{-1}$. 
-Their analysis assumes that the total density profile follows the light distribution, neglecting the contribution from dark matter.
+We then compare our models with several sets of measurements from the
+literature.  For consistency with the analysis described above we
+should in principle compare the model with the IMF normalization
+inferred for galaxies at $\log{\msalp}=11.5$ and $\log{\sigma}=2.4$.
+However there are no studies in which the IMF is described in terms of
+both stellar mass and velocity dispersion, as trends of the IMF are
+tipically reported in terms of velocity dispersion alone.  In such
+cases we simply plot the value of $\aimf$ inferred for galaxies at
+$\log{\sigma}=2.4$.  For observational sets that are too small in size
+even to derive a trend between IMF and $\sigma$ we instead use the
+values of $a_*$ and $a_\sigma$ measured in \Sref{sect:obs} for the S15
+sample to correct those measurements to the pivot point.
+
+\citet{CvD12} constrained the IMF of a sample of nearby massive
+ellipticals by fitting stellar population models to spectral indices
+sensitive to the abundance of low-mass stars.  They found a trend
+between IMF slope, and normalization, and stellar velocity
+dispersion. We took their measurements of the IMF normalization,
+converted them to our definition of $\aimf$, then fitted
+for a power-law dependence between $\aimf$ and $\sigma$ and plotted
+the value inferred at $\log{\sigma}=2.4$ in \Fref{fig:bevol}.  Using a
+similar technique, \citet{Spi++14} constrained the IMF of low redshift
+early-type galaxies by fitting stellar population models to a large
+sample of Sloan Digital Sky Survey spectra.  They measured a positive
+trend between IMF normalization and galaxy velocity dispersion. In
+\Fref{fig:bevol} we plot the value of $\aimf$ inferred by
+\citet{Spi++14} for galaxies at $\log{\sigma} = 2.4$.
+
+These are all low-redshift measurements, plotted with the purpose of
+estimating the systematic uncertainty in the determination of $\aimf$
+with different techniques.  At higher redshift, \citet{S+C14}
+constrained the IMF of 68 galaxies at $z\sim0.75$ from dynamical
+modeling of single aperture stellar kinematics data. %The median
+velocity dispersion of the \citet{S+C14} sample is $\sim
+200~\rm{km\,}\rm{s}^{-1}$.  Their analysis assumes that the total
+density profile follows the light distribution, neglecting the
+contribution of dark matter.
+
 %We use the reported values of the best-fit IMF normalization and velocity dispersion to fit for a $\sigma-
-Although \citet{S+C14} report values of the IMF normalization and velocity dispersion for each object, we cannot use this information directly to fit for a trend between $\aimf$ and $\sigma$ because in dynamical analysis, unlike in the spectral fitting technique, the measurement uncertainty on the velocity dispersion is strongly correlated with that on the IMF. 
-An accurate fit of $\aimf$ versus $\sigma$ would then require a full knowledge of the measurement uncertainty in the $\sigma-\aimf$ plane, which is not available. 
-We then fix the slope of the $\sigma-\aimf$ relation to the value measured at low-$z$ by \citet{Spi++14} and fit for the normalization of the IMF at $\log{\sigma}=2.4$ in the \citet{S+C14} sample. 
-The resulting value of $\aimf$ is consistent with the ``$M_*$ model'' and in slight tension with the ``$\sigma$ model'', though this tension is likely to disappear once the contribution from dark matter is taken into account.
+
+Although \citet{S+C14} report values of the IMF normalization and
+velocity dispersion for each object, we cannot use this information
+directly to fit for a trend between $\aimf$ and $\sigma$ because in
+dynamical analysis, unlike in the spectral fitting technique, the
+measurement uncertainty on the velocity dispersion is strongly
+correlated with that on the IMF.  An accurate fit of
+$\aimf$ versus $\sigma$ would then require a full knowledge of the
+measurement uncertainty in the $\sigma-\aimf$ plane, which, unlike for the S15 sample, is not
+available.  We then fix the slope of the $\sigma-\aimf$ relation to
+the value measured at low-$z$ by \citet{Spi++14} and fit for the
+normalization of the IMF at $\log{\sigma}=2.4$ in the \citet{S+C14}
+sample.  The resulting value of $\aimf$ is consistent with the ``$M_*$
+model'' and in slight tension with the ``$\sigma$ model'', though this
+tension is likely to disappear once the contribution from dark matter
+is taken into account.
 
 %\citet{Mar++15b} measured the low-mass end slope of the IMF of a sample of 49 massive early-type galaxies at $0.9 < z < 1.5$ through the fitting of the $\mathrm{TiO}_2$ spectral feature
 
-At redshift higher than $z\sim0.8$ there are no robust measurements of the IMF normalization.
-However we can put upper limits on the stellar mass, and the IMF, of galaxies with measured velocity dispersion using dynamical arguments.
-We can write the virial theorem for a stationary stellar system,
+At redshift higher than $z\sim0.8$ there are no robust measurements of
+the IMF normalization.  However we can put upper limits on the stellar
+mass, and the IMF, of galaxies with measured velocity dispersion using
+dynamical arguments.  We can write the virial theorem for a stationary
+stellar system,
 \begin{equation}\label{eq:virial}
 K_V\sigma_{e2}^2 = G\frac{M}{R_e},
 \end{equation}
-where $M$ is the total (stellar plus dark matter) mass, $R_e$ the projected half-light radius, $\sigma_{e2}$ the luminosity-weighted line of sight velocity dispersion within a circular aperture of radius $R_e/2$, and $K_V$ is a coefficient that takes into account the density profile of mass and light, geometrical effects and the distribution of stellar orbits.
-In the limit where all the mass is in stars (no dark matter), then $M=\mtrue$. In the same limit the virial coefficient $K_V$ can be estimated using the spherical Jeans equation, and \Eref{eq:virial} can be used to put an upper limit on the stellar mass.
+where $M$ is the total (stellar plus dark-matter) mass, $R_e$ the
+projected half-light radius, $\sigma_{e2}$ the luminosity-weighted
+line of sight velocity dispersion within a circular aperture of radius
+$R_e/2$, and $K_V$ is a coefficient that takes into account the
+density profile of mass and light, geometrical effects and the
+distribution of stellar orbits.  In the limit in which all the
+  mass is in stars (no dark matter) $M=\mtrue$, so the virial
+  coefficient $K_V$ can be used to put an upper limit on the stellar
+  mass.
 
-We then collect measurements of $\sigma_{e2}$ in the redshift range $0.8 < z < 2$ from the literature. Following \citet{Mas++15} we consider measurements from \citet{vdW++08}, \citet{Cap++09}, \citet{New++10}, \citet{Ono++12}, \citet{Bez++13}, \citet{vdS++13}, as well as measurements from \citet{Gar++15}.
-We assume isotropic orbits, consistently with the analysis of the S15 data, and use the spherical Jeans equation to calculate $K_V$ for a mass-follows-light Sersic profile with structural parameters given by the observed values.
-We solve for $M=\mtrue$ in \Eref{eq:virial} and divide the stellar mass by the value obtained from stellar population synthesis assuming a Salpeter IMF to obtain $\aimf$. 
-Finally, we correct these measurements to the pivot point $\log{\msalp}=11.5$, $\log{\sigma}=2.4$ using the values of $a_*$ and $a_\sigma$ measured in the analysis of S15 data.
-$1-\sigma$ upper limits ($84\%$ enclosed probability) on $\log{\aimf}$ for individual galaxies are plotted in \Fref{fig:bevol}.
-42\% (25\%) of the objects have $1-\sigma$ upper limits below the ``$M_*$ model'' (``$\sigma$ model''), indicating tension between both models and observations.
-Part of this tension could simply be due to intrinsic scatter in the distribution of IMF in the population of galaxies.
-Although in \Sref{sect:obs} we constrained the intrinsic scatter to be below $0.08$ in $\log{\aimf}$, there are indications that the variation in IMF might be larger \citep{S+L13}. Nevertheless, most of the median values of the individual estimates of $\aimf$ (indicated by the tip of the arrows in \Fref{fig:bevol}) lie below both models, suggesting a systematic bias between models and data.
-Possible causes for this discrepancy are discussed in the next Section.
-}
+We then collect measurements of $\sigma_{e2}$ in the redshift range
+$0.8 < z < 2$ from the literature. Following \citet{Mas++15} we
+consider measurements from \citet{vdW++08}, \citet{Cap++09},
+\citet{New++10}, \citet{Ono++12}, \citet{Bez++13}, \citet{vdS++13}, as
+well as measurements from \citet{Gar++15}.  We assume isotropic
+  stellar velocity distribution, consistently with the analysis of the
+  S15 data, and use the spherical Jeans equation to calculate $K_V$
+  for a mass-follows-light S\'{e}rsic \citep{Ser68} profile with structural parameters
+  given by the observed values. We
+solve for $M=\mtrue$ in \Eref{eq:virial} and divide the stellar mass
+by the value obtained from stellar population synthesis assuming a
+Salpeter IMF to obtain $\aimf$.  Finally, we correct these
+measurements to the pivot point $\log{\msalp}=11.5$,
+$\log{\sigma}=2.4$ using the values of $a_*$ and $a_\sigma$ measured
+in the analysis of S15 data.  $1-\sigma$ upper limits ($84\%$ enclosed
+probability) on $\log{\aimf}$ for individual galaxies are plotted in
+\Fref{fig:bevol}.  42\% (25\%) of the objects have $1-\sigma$ upper
+limits below the ``$M_*$ model'' (``$\sigma$ model''), indicating
+tension between both models and observations.  Part of this tension
+could simply be due to intrinsic scatter in the distribution of IMF in
+the population of galaxies.  Although in \Sref{sect:obs} we
+constrained the intrinsic scatter to be below $0.08$ in $\log{\aimf}$,
+there are indications that the scatter in IMF might be larger 
+\citep{S+L13}. Nevertheless, most of the
+median values of the individual estimates of $\aimf$ (indicated by the
+tip of the arrows in \Fref{fig:bevol}) lie below both models,
+suggesting a systematic bias between models and data.  Possible causes
+for this discrepancy are discussed in the next Section.
 %
 \begin{figure*}
  \includegraphics[width=\textwidth]{timeevol.eps}
- \caption{
-{\bf
-{\em Solid lines:} Average IMF normalization for galaxies at $\log{\msalp}=11.5$ and $\log{\sigma}=2.4$ of the mock samples, calculated using \Eref{eq:imfform}, as a function of redshift.
-{\em shaded regions:} Observational constraints from the analysis of S15 data carried out in \Sref{sect:obs}, obtained by evaluating \Eref{eq:sl2sfit} at the same stellar mass and velocity dispersion as the average of the mock. Different levels mark the 68\%, 95\% and 99.7\% enclosed probability regions.
-{\em Error bar points:} Average IMF normalization at $\log{\msalp}=11.5$ and $\log{\sigma}=2.4$ inferred by \citet{CvD12}, \citet{Spi++14} and \citet{S+C14}. Horizontal error bars indicate the range in redshift of the galaxies within the samples.
-{\em Upper limit points:} estimates of $\aimf$ from isotropic mass-follows-light spherical Jeans dynamical models applied to velocity dispersion measurements from the literature, corrected to the pivot point assuming values of $a_*$ and $a_\sigma$ measured in the S15 analysis. The upper bar marks the $1-\sigma$ (84 percentile) limit, while the bottom arrow marks the median.
-}
-}
+ \caption{ {\em Solid lines:} Average effective IMF
+   normalization for galaxies at $\log{\msalp}=11.5$ and
+   $\log{\sigma}=2.4$ of the mock samples, calculated using
+   \Eref{eq:imfform}, as a function of redshift.  {\em Shaded
+     regions:} Observational constraints from the analysis of S15 data
+   carried out in \Sref{sect:obs}, obtained by evaluating
+   \Eref{eq:sl2sfit} at $\log{\msalp}=11.5$ and $\log{\sigma}=2.4$. Different levels mark the 68\%,
+   95\% and 99.7\% enclosed probability regions.  {\em Points with
+     error bars:} Average IMF normalization at $\log{\msalp}=11.5$ and
+   $\log{\sigma}=2.4$ inferred by \citet{CvD12}, \citet{Spi++14} and
+   \citet{S+C14}. Horizontal error bars indicate the range in redshift
+   of the galaxies within the samples.  {\em Triangles:}
+   upper limit estimates of $\aimf$ from isotropic mass-follows-light spherical
+   Jeans dynamical models applied to velocity dispersion measurements
+   from the literature, corrected to the pivot point assuming values
+   of $a_*$ and $a_\sigma$ measured in the S15 analysis. The triangle 
+   marks the $1-\sigma$ (84 percentile) limit.
+   }
  \label{fig:bevol}
 \end{figure*}
 %
-\section{Discussion and Summary}\label{sect:discuss} 
+\section{Discussion}\label{sect:discuss} 
 
-Using empirically motivated recipes for describing the IMF of massive galaxies together with the dry merger evolution model developed by \citet{Nip++12} we studied the time evolution of the effective IMF, defined as the ratio between the true stellar mass and the stellar mass one would infer assuming a Salpeter IMF, of a population of massive galaxies from $z=2$ to $z=0$.
-The models are set up to match the observed correlations between IMF and stellar mass and velocity dispersion in massive early-type galaxies at $z\sim0.3$.
 
-Our model predicts a decrease in the effective IMF with time as galaxies merge with systems with a lighter IMF. This is seen in the evolutionary tracks of individual mock objects in \Fref{fig:snap} and in the evolution of the average IMF normalization of the mock sample, parameter $b$ of \Eref{eq:imfform}, in \Fref{fig:bevol}.
-We compared this prediction with observational constraints on the IMF at $z>0.3$. 
-{\bf
-The first set of measurements we consider is the S15 sample, which we used to calibrate our model at redshift $z=0.3$. The S15 data favors an IMF that decreases with increasing redshift, at fixed stellar mass and velocity dispersion. By contrast, the models predict a constant or increasing value of $\aimf$ at larger $z$.
-}
-A possible source for this tension is the treatment of the dark matter component in the analysis of the S15 data. In this work we fixed the shape of the dark matter density distribution to an NFW profile (see the Appendix). The dark matter slope is however highly degenerate with the IMF \citep[see e.g.][]{Aug++10}. In particular, if the dark matter profile is getting steeper with time the IMF inferred at low redshiftwoud decrease, bringing the model in better agreement with the measurements. However such an hypothesis is difficult to verify with the current data.
+\subsection{Comparison of models with observations}
 
-{\bf
-Although the discrepancy between the models and the S15 measurements is within $3-\sigma$, a similar tension is seen in the comparison with dynamical estimates on the IMF at $z>1$.
-}
-Dark matter cannot be a source of bias in this case because its contribution is ignored in our treatment of high redshift measurements. 
+Our model predicts that the effective IMF $\aimf$ of massive
+  early-type galaxies should tend to increase, on average, with
+  redshift or remain constant. However, such a trend is not apparent
+  from the few observational constraints on the IMF available at
+  $z>0.3$: some data suggest that $\aimf$ might be lower at higher
+  $z$ \citep[see also][]{Tor++14}. The first set of measurements we consider is the S15 sample,
+which we used to calibrate our model at redshift $z=0.3$. The S15 data
+favors an IMF that decreases with increasing redshift, at fixed
+stellar mass and velocity dispersion. By contrast, the models predict
+a constant or increasing value of $\aimf$ at larger $z$.  A possible
+source for this tension is the treatment of the dark-matter component
+in the analysis of the S15 data, in which we fixed the shape of
+  the dark-matter density distribution to an NFW profile (see the
+  Appendix). The dark-matter slope is however highly degenerate with
+the IMF \citep[see e.g.][]{Aug++10}. In particular, if the
+  dark-matter profile is getting steeper with time the IMF
+  normalization inferred at low redshift would decrease, bringing the
+  model in better agreement with the measurements. However such an
+  hypothesis is difficult to verify with the current data.  Although
+  the discrepancy between the models and the S15 measurements is
+  within $3-\sigma$, a similar tension is seen in the comparison with
+  dynamical estimates on the IMF at $z>1$.  Dark matter cannot be a
+  source of bias in this case because its contribution is ignored in
+  our treatment of high redshift measurements.
+
 %average IMF inferred from the S15 data for galaxies with the same stellar mass and velocity dispersion as the mock appears to decrease with increasing redshift.
 %An average IMF that becomes heavier with time is in stark contrast with our model based on dry mergers: it is difficult to imagine a scenario in which the IMF normalization is an increasing function of galaxy mass (or velocity dispersion) and at the same time the accretion of smaller systems causes the IMF of central galaxies to become heavier.
 %A similar tension between model and observations is seen in the comparison with the \citet{Gar++15} measurements. 
 %Dark matter cannot be a source of bias in this case because its contribution is ignored in our treatment of high redshift measurements. 
 %\citet{Gar++15} selected preferentially compact galaxies and proposed a scenario in which the IMF is lighter in more compact objects, to reconcile their measurements with local constraints on the IMF in normal massive galaxies. While this interpretation could help to provide a better match with our model, a strong anticorrelation between stellar mass density and IMF has been ruled out by the S15 study. It is not clear if a mild trend of increasing IMF normalization for more extended objects, as allowed by the S15 constraints, would be sufficient to bring the \citet{Gar++15} measurements in agreement with our model. Since galaxy sizes are not simulated in our model we cannot test this hypothesis further in this study.
 
-Another possible source of error that could be affecting the measurements differently at different redshifts is the presence of spatial gradients in the IMF.
-As shown by \citet{New++15}, an IMF that becomes less heavy at increasing distance from the center of a galaxy would bias lensing and dynamical studies that assume a spatially constant IMF (such as the observations presented here) towards a globally heavier IMF. A radial gradient in IMF could be created by dry mergers if the newly accreted material has a more extended distribution than the preexisting stellar distribution. Indeed, minor dry mergers are predicted to build up an extended envelope of stars \citep{Hop++10} which, in the context of our model, would have a lighter IMF compared to the central parts. Such an extended envelope of stars with lighter IMF would grow in time, producing a stronger bias towards a heavier inferred IMF in low redshift galaxies. \citet{Mar++15} and \citet{LaB++16} claimed a detection of a spatial variation of the IMF, heavier in the center, in three massive early-type galaxies. 
-Testing whether such a scenario could be the cause of the apparent evolution in IMF would require a much more complex model than the one explored in this work, and we therefore leave it to future study.
+Another possible source of error that could be affecting the
+measurements differently at different redshifts is the presence of
+spatial gradients in the IMF.  As shown by \citet{New++15}, an IMF
+that becomes less heavy at increasing distance from the center of a
+galaxy would bias lensing and dynamical studies that assume a
+spatially constant IMF (such as the observations presented here)
+towards a globally heavier IMF. A radial gradient in IMF could be
+created by dry mergers if the newly accreted material has a more
+extended distribution than the preexisting stellar
+distribution. Indeed, minor dry mergers are predicted to build up an
+extended envelope of stars \citep{NJO09,Hop++10} which, in the context
+of our model, would have a lighter IMF compared to the central
+parts. Such an extended envelope of stars with lighter IMF would grow
+in time, producing a stronger bias towards a heavier inferred IMF in
+low redshift galaxies. \citet{Mar++15} and \citet{LaB++16} claimed a
+detection of a spatial variation of the IMF, heavier in the center, in
+three massive early-type galaxies.  Testing whether such a scenario
+could be the cause of the apparent evolution in IMF would require a
+much more complex model than the one explored in this work, and we
+therefore leave it to future study.
 
 %{\bf 
 %The ``$\sigma$ model'' exhibits a nearly constant evolution in the IMF normalization at fixed $\mstar$ and $\sigma$ and as a result is in better agreement with $z>1$ constraints with respect to the ``$M_*$ model''. The reason for this behavior is due to the assumed evolution in velocity dispersion of individual galaxies: $\sigma$ and $\aimf$ decrease at the same rate (right panels of \Fref{fig:snap}), so that at any given time galaxies at fixed velocity dispersion have roughly the same IMF.
@@ -423,36 +819,94 @@ Testing whether such a scenario could be the cause of the apparent evolution in 
 %In a scenario where the velocity dispersion evolves more slowly the $\sigma-\aimf$ correlation will not be preserved but will become shallower with time. At fixed $\sigma$, the IMF will be heavier at larger $z$, increasing the tension between model and $z>1$ data.
 %}
 
-{\bf
-Assuming that this tension is real and not the result of observational biases, our simple scenario based on dry mergers must be modified.
-In a previous work we showed how a very similar dry merger evolution model to the one presented here is unable to reproduce both the size evolution and the evolution in the slope of the density profile of massive galaxies at $z<1$ \citep{SNT14}.
-The model predicted density slopes that become shallower with time, at odds with lensing constraints. As a solution we proposed a scenario in which a small fraction (about 10\%) of the accreted baryonic mass is in the form of gas that falls to the center of the galaxy causing the density profile to steepen and the velocity dispersion to increase as a result of adiabatic contraction. 
-Such a scenario would modify the predicted IMF evolution in two ways: with the addition of a population of stars formed in-situ and by modifying the evolution of the velocity dispersion.
-Contributing with less than 10\% of the final mass, the newly formed stars would not change significantly the effective IMF of a galaxy unless their IMF normalization differs by a factor of a few with respect to that of the accreted satellites, which seems unplausible. However, a central core of stars with a different IMF from the preexisting population would create a radial gradient in the IMF which, as discussed above, could be a source of bias for dynamical measurements.
-The increase in velocity dispersion caused by the adiabatic contraction from the infall of gas would improve the agreement with the observed evolution of the $M_*-\sigma$ relation.
-We have shown in \Fref{fig:mason} how our model tends to overpredict the average velocity dispersion at $z=2$ with respect to observations, meaning that a slower decline evolution in velocity dispersion is required to precisely match both $z=0$ and $z=2$ velocity dispersion measurements.
-However, in a scenario where the velocity dispersion evolves more slowly the $\sigma-\aimf$ correlation will not be preserved, as predicted in our purely dry model (see right-hand panel of \Fref{fig:snap}), but will become shallower with time. This means that at fixed $\sigma$ the IMF will be heavier at larger $z$, increasing the tension between model and $z>1$ data.
-}
+Assuming that this tension is real and not the result of observational
+biases, our simple scenario based on dry mergers must be modified.  In
+a previous work we showed how a very similar dry merger evolution
+model to the one presented here is unable to reproduce both the size
+evolution and the evolution in the slope of the density profile of
+massive galaxies at $z<1$ \citep{SNT14}.  The model predicted density
+slopes that become shallower with time, at odds with lensing
+constraints. As a solution we proposed a scenario in which a small
+fraction (about 10\%) of the accreted baryonic mass is in the form of
+gas that falls to the center of the galaxy causing the density profile
+to steepen and the velocity dispersion to increase as a result of
+adiabatic contraction.  
 
-A second prediction of our model is that the deacrease of the IMF mismatch parameter with time is stronger for the more massive objects. This is shown by the evolution in the tilt of the $\aimf-\msalp$ correlation with redshift seen in the left hand column of \Fref{fig:snap}.
-To understand the origin of this effect, in \Fref{fig:cornerplot} we plot the fractional change in effective IMF between $z=2$ and $z=0$, $\Delta\log{\aimf}=\log{\aimf}(z=0)-\log{\aimf}(z=2)$ of our mock galaxies together with key quantities such as the initial halo mass and initial stellar mass and accreted stellar mass. 
+Such a scenario would modify the predicted IMF
+evolution in two ways: with the addition of a population of stars
+formed in-situ and by modifying the evolution of the velocity
+dispersion.  Contributing with less than 10\% of the final mass, the
+newly formed stars would not change significantly the effective IMF of
+a galaxy unless their IMF normalization differs by a factor of a few
+with respect to that of the accreted satellites, which seems
+unplausible. However, a central core of stars with a different IMF
+from the preexisting population would create a radial gradient in the
+IMF which, as discussed above, could be a source of bias for dynamical
+measurements.  The increase in velocity dispersion caused by the
+adiabatic contraction from the infall of gas would improve the
+agreement with the observed evolution of the $\msalp-\sigma$ relation.
+We have shown in \Fref{fig:vdisp} how our model tends to overpredict
+the average velocity dispersion at $z=2$ with respect to observations,
+meaning that a slower decline in velocity dispersion is required to
+precisely match both $z=0$ and $z=2$ velocity dispersion measurements.
+However, in a scenario in which the velocity dispersion evolves more
+slowly the $\sigma-\aimf$ correlation will not be preserved, as
+predicted in our purely dry-merger model (see right-hand panel of
+\Fref{fig:snap}), but will become shallower with time. This means that
+at fixed $\sigma$ the IMF will be heavier at larger $z$, increasing
+the tension between model and $z>1$ data.
+
+Finally, a possible solution to the discrepancy would be to allow for completely different IMF distributions between centrals and satellites. Our model assumes that the scaling relation between the effective IMF of accreted galaxies and their galaxy properties is the same as that of centrals, extrapolated to low masses.
+If we allow, for instance, the IMF normalization of satellites to be on average heavier than that of centrals, individual galaxies would evolve towards a heavier effective IMF with time, in the direction suggested by the data. There are currently no robust observations through which we can test this hypothesis.
+
+\subsection{IMF evolution and average merger mass ratio}
+
+A second prediction of our model is that the deacrease of the IMF
+mismatch parameter with time is stronger for the more massive
+objects. This is shown by the evolution in the tilt of the
+$\aimf-\msalp$ correlation with redshift seen in the left hand column
+of \Fref{fig:snap}.  To understand the origin of this effect, in
+\Fref{fig:cornerplot} we plot the fractional change in effective IMF
+between $z=2$ and $z=0$,
+$\Delta\log{\aimf}=\log{\aimf}(z=0)-\log{\aimf}(z=2)$ of our mock
+galaxies together with key quantities such as the initial halo mass
+and initial stellar mass and accreted stellar mass.
 %
 \begin{figure*}
  \includegraphics[width=\textwidth]{cornerplot.eps}
- \caption{
-Distribution in stellar mass and halo mass at $z=2$, fracional variation in stellar mass between $z=0$ and $z=2$, and stellar mass-weighted merger mass ratio, as defined in \Eref{eq:xieff}.
-{\em Purple dots}: ``$M_*$ model''. {\em Green dots}: ``$\sigma$ model''.
-}
+ \caption{ 
+   Distribution in stellar mass and halo mass at $z=2$, fracional
+   variation in stellar mass between $z=0$ and $z=2$, and stellar
+   mass-weighted merger mass ratio, as defined in \Eref{eq:xieff}.
+   {\em Purple dots}: ``$M_*$ model''. {\em Green dots}: ``$\sigma$
+   model''.  }
  \label{fig:cornerplot}
 \end{figure*}
 %
-The effective IMF of individual galaxies in our sample generally decreases with time ($\Delta\log{\aimf}<0$). This is easily understood, as by definition central galaxies merge with less massive systems that, in our model, have a lighter IMF. 
-In order to produce a dependence of the IMF on mass that becomes shallower with time it is necessary for the more massive systems to have a stronger decrease in their IMF with time (more negative values of $\Delta\log{\aimf}$).
-As can be seen in the bottom left panel of \Fref{fig:cornerplot}, this is indeed the case.
+The effective IMF of individual galaxies in our sample generally
+decreases with time ($\Delta\log{\aimf}<0$). This is easily
+understood, as by definition central galaxies merge with less massive
+systems that, in our model, have a lighter IMF.  In order to produce a
+dependence of the IMF on mass that becomes shallower with time it is
+necessary for the more massive systems to have a stronger decrease in
+their IMF with time (more negative values of $\Delta\log{\aimf}$).  As
+can be seen in the bottom left panel of \Fref{fig:cornerplot}, this is
+indeed the case.
 
-Differences in $\Delta\log{\aimf}$ reflect differences in merger history.
-Since mergers tend to decrease the effective IMF normalization, we expect galaxies with the highest increase in stellar mass to also show the largest changes in effective IMF. However this is not observed to be the case, as can be seen from \Fref{fig:cornerplot} (fourth row, third column).
-If the amount of accretion does not play a central role in setting the final IMF, then the different change in IMF between low mass and high mass systems must be set by differences in the type of mergers. To quantify this, we measure the accreted stellar mass-weighted merger mass ratio, $\left< \xi \right>_*$, defined as the average over all mergers between $z=2$ and $z=0$ of the halo mass ratio between the accreted satellites and the central halo weighted by the accreted stellar mass with each merger: 
+Differences in $\Delta\log{\aimf}$ reflect differences in merger
+history.  Since mergers tend to decrease the effective IMF
+normalization, we expect galaxies with the highest increase in stellar
+mass to also show the largest changes in effective IMF. However this
+is not observed to be the case, as can be seen from
+\Fref{fig:cornerplot} (fourth row, third column).  If the amount of
+accretion does not play a central role in setting the final IMF, then
+the different change in IMF between low-mass and high-mass systems
+must be set by differences in the type of mergers. To quantify this,
+we measure the accreted stellar mass-weighted merger mass ratio,
+$\left< \xi \right>_*$, defined as the average over all mergers
+between $z=2$ and $z=0$ of the mass ratio between the accreted
+satellites and the central halo weighted by the accreted stellar mass
+with each merger:
 \begin{equation}\label{eq:xieff}
 \left< \xi \right>_* = \frac{\int dz \int d\xi \xi \frac{\mathrm{d}^2N_{\mathrm{merg}}}{\mathrm{d}z \mathrm{d}\xi} \mathcal{R}_{*,h}(\xi \mhalo, z)\xi\mhalo}{\int dz \int d\xi  \frac{\mathrm{d}^2N_{\mathrm{merg}}}{\mathrm{d}z \mathrm{d}\xi} \mathcal{R}_{*,h}(\xi \mhalo, z)\xi\mhalo}.
 \end{equation}
@@ -460,27 +914,95 @@ $\left< \xi \right>_*$ is plotted in \Fref{fig:cornerplot}. We see that $\left< 
 This means that for the most massive galaxies the bulk of the accreted stellar mass is brought in through mergers of relatively small mass ratio, while for less massive galaxies major mergers play a more important role.
 Given our IMF prescription, where the heaviness of the IMF of satellites increases with mass, minor mergers produce a stronger decrease in the effective IMF of a galaxy than major mergers at fixed accreted stellar mass. 
 This is seen in the bottom right panel of \Fref{fig:cornerplot}, where $\left< \xi \right>_*$ correlates with the change in effective IMF.
-We then conclude that the shallowing of the $M_*-\aimf$ or $\sigma-\aimf$ trends with time seen in our \Fref{fig:snap} is a result of the different relative importance of major and minor mergers in systems of different mass.
-
-Another prediction of our model is the mixing between stellar mass and velocity dispersion dependence of the IMF shown in \Fref{fig:tracks}.
-The dependence of velocity dispersion, $a_\sigma$, seen at $z=0$ in the ``$M_*$ model'' can be easily understood. 
-The ``$M_*$ model'' is initialized with zero scatter around the $M_*-\aimf$ relation at $z=2$.
-Since then, individual galaxies evolve roughly perpendicularly to the $M_*-\aimf$ relation (left hand panels of \Fref{fig:snap}), so that by $z=1$ a significant scatter is introduced. At that point a pure dependence of the IMF on stellar mass is no longer a good description of the model, and a mixed dependence on both $M_*$ and $\sigma$ is preferred.
-In contrast in the ``$\sigma$ model'' galaxies evolve parallel to the $\sigma-\aimf$ relation in place at $z=2$ and very little scatter is added down to $z=0.3$, so that measuring the scatter in IMF as a function of $z$ is potentially a powerful diagnostic. No additional dependence on $M_*$ is required to describe the data, hence the very small change in the parameters $a_*$ and $a_\sigma$ for this model.
-{\bf As discussed in \Sref{sect:results} however, this prediction relies on the assumption of parabolic orbits for the accreted satellites. If we allow for a milder decrease in velocity dispersion with dry mergers, we find a larger increase in the parameter $a_*$ and a correspondingly larger decrease in $a_\sigma$ for the ``$\sigma$ model''.}
-Because of the rapid change in the coefficients $a_*$ and $a_\sigma$ with time it is very difficult to determine from $z\sim0$ observations which quantity between $\sigma$ and $M_*$ is the IMF fundamentally dependent on. Current constraints from lensing and stellar dynamics are unable to differentiate between the two models (see \Fref{fig:tracks}).
-
-An important assumption in our model is that all of the growth in stellar mass between $z=2$ and $z=0$ is due to dry mergers. In other terms, our model only applies to the population of quiescent galaxies at $z=2$. This assumption complicates the comparison between predictions from our model and observations, because the number density of quiescent galaxies is observed to increase substantially with time, in particular at $z>1$ \citep[e.g.][]{Ilb++13, Cas++13}. Depending on what the IMF of the newly quenched object is, some results might change as a result of the so-called progenitor bias. However: predictions on the $z<1$ evolution for the high-mass end of the galaxy distribution should still hold, since the number density of quiescent galaxies shows little evolution in that region of the parameter space \citep{Lop++12}.
-
-To summarize, we predicted the evolution of the IMF in massive galaxies between $z=2$ and $z=0$ assuming a purely dry merger evolution.
-We find that, at fixed stellar mass and velocity dispersion, the population of galaxies evolves with a constant or increasing IMF normalization at increasing $z$.
-This prediction appears to be in slight tension with the few observational constraints on the IMF available at $z>0.3$. However, there are systematic effects that could be affecting observations the imporance of which has not fully been assessed yet, {\bf most importantly the contribution of dark matter and radial gradients in the IMF.}
-Trends between stellar mass and velocity dispersion are qualitatively preserved by dry mergers, but the slope of the correlation between stellar mass and IMF becomes less steep with time.
-Finally, we find that the relative dependence of the IMF on stellar mass and velocity dispersion gets mixed by dry mergers, making it difficult to observationally determine the fundamental parameter(s) governing the IMF from $z\sim0$ measurements.
+We then conclude that the shallowing of the $\msalp-\aimf$ or $\sigma-\aimf$ trends with time seen in our \Fref{fig:snap} is a result of the different relative importance of major and minor mergers in systems of different mass.
 
 
 
-%\section{Conclusions}\label{sect:concl} 
+
+\subsection{Dependence on the IMF on global galaxy properties}
+
+Another prediction of our model is the mixing between stellar mass and
+velocity dispersion dependence of the IMF shown in \Fref{fig:tracks}.
+The dependence of velocity dispersion, $a_\sigma$, seen at $z=0$ in
+the ``$M_*$ model'' can be easily understood.  The ``$M_*$ model'' is
+initialized with zero scatter around the $\msalp-\aimf$ relation at
+$z=2$.  Since then, individual galaxies evolve roughly perpendicularly
+to the $\msalp-\aimf$ relation (left hand panels of \Fref{fig:snap}),
+so that by $z=1$ a significant scatter is introduced. At that point a
+pure dependence of the IMF on stellar mass is no longer a good
+description of the model, and a mixed dependence on both $M_*$ and
+$\sigma$ is preferred.  In contrast in the ``$\sigma$ model'' galaxies
+evolve parallel to the $\sigma-\aimf$ relation in place at $z=2$ and
+very little scatter is added down to $z=0.3$, so that measuring the
+scatter in IMF as a function of $z$ is potentially a powerful
+diagnostic. No additional dependence on $M_*$ is required to describe
+the data, hence the very small change in the parameters $a_*$ and
+$a_\sigma$ for this model.  As discussed in \Sref{sect:results}
+  however, this prediction relies on the assumption of parabolic
+  orbits for the accreted satellites. If we allow for a milder
+  decrease in velocity dispersion with dry mergers, we find a larger
+  increase in the parameter $a_*$ and a correspondingly larger
+  decrease in $a_\sigma$ for the ``$\sigma$ model''. Because of the
+relatively rapid change in the coefficients $a_*$ and $a_\sigma$ with
+time it is very difficult to determine from $z\sim0$ observations
+which quantity between $\sigma$ and $M_*$ is the IMF fundamentally
+dependent on. Current constraints from lensing and stellar dynamics
+are unable to differentiate between the two models (see
+\Fref{fig:tracks}).
+
+An important assumption in our model is that all of the growth in
+stellar mass between $z=2$ and $z=0$ is due to dry mergers. In other
+terms, our model only applies to the population of quiescent galaxies
+at $z=2$. This assumption complicates the comparison between
+predictions from our model and observations, because the number
+density of quiescent galaxies is observed to increase substantially
+with time, in particular at $z>1$ \citep[e.g.][]{Ilb++13,
+  Cas++13}. Depending on what the IMF of the newly quenched object is,
+some results might change as a result of the so-called progenitor
+bias. However: predictions on the $z<1$ evolution for the high-mass
+end of the galaxy distribution should still hold, since the number
+density of quiescent galaxies shows little evolution in that region of
+the parameter space \citep{Lop++12}.
+
+\section{Conclusions}\label{sect:concl} 
+
+Using empirically motivated recipes for describing the IMF of massive
+galaxies together with the dry merger evolution model developed by
+\citet{Nip++12} we studied the time evolution of the effective IMF,
+defined as the ratio between the true stellar mass and the stellar
+mass one would infer assuming a Salpeter IMF, of a population of
+massive galaxies from $z=2$ to $z=0$.  The models are set up to match
+the observed correlations between IMF and stellar mass and velocity
+dispersion in massive early-type galaxies at $z\sim0.3$.
+
+Our model predicts a decrease in the effective IMF with time as
+galaxies merge with systems with a lighter IMF. This is seen in the
+evolutionary tracks of individual mock objects in \Fref{fig:snap} and
+in the evolution of the average IMF normalization of the mock sample,
+parameter $b$ of \Eref{eq:imfform}, in \Fref{fig:bevol}.  We compared
+this prediction with observational constraints on the IMF at $z>0.3$.
+
+To summarize, we predicted the evolution of the IMF in massive
+galaxies between $z=2$ and $z=0$ assuming a purely dry merger
+evolution.  We find that, at fixed stellar mass and velocity
+dispersion, the population of galaxies evolves with a constant or
+increasing IMF normalization at increasing $z$.  This prediction
+appears to be in slight tension with the few observational constraints
+on the IMF available at $z>0.3$. However, there are systematic effects
+that could be affecting observations the imporance of which has not
+fully been assessed yet, most importantly the contribution of dark
+matter and radial gradients in the IMF.  
+Assuming that the tension is real and not the effect of systematics, the most plausible way to reconcile model and observations is to allow the effective IMF of satellite galaxies to be drawn from a different distribution, heavier at fixed galaxy properties, than that describing centrals.
+Trends between stellar mass
+and velocity dispersion are qualitatively preserved by dry mergers,
+but the slope of the correlation between stellar mass and effective
+IMF becomes less steep with time.  Finally, we find that the relative
+dependence of the IMF on stellar mass and velocity dispersion gets
+mixed by dry mergers, making it difficult to observationally determine
+the fundamental parameter(s) governing the IMF from $z\sim0$
+measurements.
+
+
 
 \section*{acknowledgments}
 %-------------------------------------------------------------------------------
@@ -498,43 +1020,65 @@ Finally, we find that the relative dependence of the IMF on stellar mass and vel
 %Since the sample of galaxies covers the redshift range $0.1 < z < 0.8$, we also allow for a redshift dependence of the IMF.
 
 \appendix
+\onecolumn
 \section{Hierarchical Bayesian inference}\label{sect:appendix}
-We use a similar hierarchical Bayesian inference method as the one used by S15 to fit for the distribution in IMF of the same sample of galaxies. The method can be summarized as follows.
-We assume that the density profile of early-type galaxies can be described by the sum of a stellar component with a de Vaucouleurs profile and a dark matter component with a Navarro Frenk and White \citep{NFW97} profile.
-We parametrize this model in terms of the Salpeter stellar mass $\msalp$, effective radius $\reff$, projected dark matter mass within a cylinder of radius $5$ kpc $\mdm$, dark matter scale radius $r_s$, effective IMF $\aimf$.
-Following S15 we assume that the effective radius is known exactly and we fix $r_s = 10\reff$ for simplicity. The exact value of $r_s$ has little impact on lensing and dynamics measurements, more sensistive to the mass distribution at the scale of a few kpc, much smaller than typical values of $r_s$ predicted by numerical simulations.
-The free parameters of each object are then $\msalp$, $\mdm$ and $\aimf$.
-From these parameters we calculate the model central velocity dispersion, $\sigmaee$, using the spherical Jeans equation and assuming isotropic orbits. Though a simplification, the spherical isotropic model has been shown to match results obtained with a more accurate dynamical modeling \citep{Bar++11}.
-
-We assume that the parameters of each galaxy are drawn from a distribution for the population of galaxies, described by a set of {\em hyperparameters} $\hyperp$:
+We use a similar hierarchical Bayesian inference method as the one
+used by S15 to fit for the distribution in IMF of the same sample of
+galaxies. The method can be summarized as follows.  We assume that the
+density profile of early-type galaxies can be described by the sum of
+a stellar component with a de Vaucouleurs profile and a dark-matter
+component with a Navarro Frenk and White \citep{NFW97} profile.  We
+parametrize this model in terms of the Salpeter stellar mass $\msalp$,
+effective radius $\reff$, projected dark-matter mass within a cylinder
+of radius $5$ kpc $\mdm$, dark-matter scale radius $r_s$ and effective
+IMF $\aimf$.  Following S15 we assume that the effective radius is
+known exactly and we fix $r_s = 10\reff$ for simplicity. The exact
+value of $r_s$ has little impact on lensing and dynamics measurements,
+more sensistive to the mass distribution at the scale of a few kpc,
+much smaller than typical values of $r_s$ predicted by numerical
+simulations.  The free parameters of each object are then $\msalp$,
+$\mdm$ and $\aimf$. For a more compact notation we label this triplet $\indpar$.
 \begin{equation}
-(\msalpi, \mdmi, \aimfi) \sim \pr(\msalpi, \mdmi, \aimfi | \hyperp),
+\indpar \equiv(\msalp, \mdm, \aimf).
+\end{equation}
+From these parameters we calculate the model
+central velocity dispersion, $\sigmaee$, using the spherical Jeans
+equation and assuming isotropic stellar velocity distribution.
+Though a simplification, the spherical isotropic model has been shown
+to match results obtained with a more accurate dynamical modeling
+\citep{Bar++11}.
+
+We assume that the parameters of each galaxy are drawn from a
+distribution for the population of galaxies, described by a set of
+{\em hyper-parameters} $\hyperp$:
+\begin{equation}
+\indpari \sim \pr(\indpari | \hyperp),
 \end{equation}
 where the subscript $i$ indicates the $i$-th galaxy in the sample.
 We model this distribution as the product of four terms:
-\begin{equation}
-\pr(\msalpi, \mdmi, \aimfi| \hyperp) = \mathcal{G}_*(\msalp|\hyperp) \mathcal{G}_\sigma(\sigmaeei|\msalp, \hyperp) \mathcal{G}_{\mathrm{DM}}(\mdmi|\msalp,\sigmaeei,\hyperp) \mathcal{G}_{\mathrm{IMF}}(\aimfi|\msalp,\sigmaeei,\hyperp),
+\begin{equation}\label{eq:hyperp}
+\pr(\indpari | \hyperp) = \mathcal{G}_*(\msalpi|\hyperp) \mathcal{G}_\sigma(\sigmaeei|\msalp, \hyperp) \mathcal{G}_{\mathrm{DM}}(\mdmi|\msalp,\sigmaeei,\hyperp) \mathcal{G}_{\mathrm{IMF}}(\aimfi|\msalp,\sigmaeei,\hyperp),
 \end{equation}
-where each term is a log-normal distribution respectively in $\msalp$, $\sigmaee$, $\mdm$ and $\aimf$.
+where each term is a log-normal distribution respectively in $\msalp$, $\sigmaee$ (which is a well-defined function of $\indpar$), $\mdm$ and $\aimf$.
 More precisely,
 \begin{equation}\label{eq:mstarterm}
 \mathcal{G}_*(\msalpi|\hyperp) = \frac{1}{\sqrt{2\pi}}{\sigma_*}\exp{\left\{-\frac{(\log{\msalpi} - \mu_*)^2}{2\sigma_*^2}\right\}}.
 \end{equation}
-
+%
 \begin{equation}
-\mathcal{G}_*(\sigmaeei|\hyperp) = \frac{1}{\sqrt{2\pi}}{\sigma_\sigma}\exp{\left\{-\frac{(\log{\sigmaeei} - \mu_\sigma(z, \msalpi))^2}{2\sigma_\sigma^2}\right\}},
+\mathcal{G}_*(\sigmaeei|\hyperp) = \frac{1}{\sqrt{2\pi}}{\sigma_\sigma}\exp{\left\{-\frac{(\log{\sigmaeei} - \mu_\sigma(z_i, \msalpi))^2}{2\sigma_\sigma^2}\right\}},
 \end{equation}
 where
 \begin{equation}
-\mu_\sigma(\msalpi) = \mu_{\sigma,0} + \zeta_\sigma(z - 0.3) + \beta_\sigma(\log{\msalpi} - 11.5).
+\mu_\sigma(\msalpi) = \mu_{\sigma,0} + \zeta_\sigma(z_i - 0.3) + \beta_\sigma(\log{\msalpi} - 11.5).
 \end{equation}
 %
 \begin{equation}
-\mathcal{G}_*(\mdmi|\hyperp) = \frac{1}{\sqrt{2\pi}}{\sigma_{\mathrm{DM}}}\exp{\left\{-\frac{(\log{\mdmi} - \mu_{\mathrm{DM}}(z, \msalpi, \sigmaeei))^2}{2\sigma_{\mathrm{DM}}^2}\right\}},
+\mathcal{G}_*(\mdmi|\hyperp) = \frac{1}{\sqrt{2\pi}}{\sigma_{\mathrm{DM}}}\exp{\left\{-\frac{(\log{\mdmi} - \mu_{\mathrm{DM}}(z_i, \msalpi, \sigmaeei))^2}{2\sigma_{\mathrm{DM}}^2}\right\}},
 \end{equation}
 where
 \begin{equation}
-\mu_{\mathrm{DM}}(\msalpi, \sigmaeei) = \mu_{\mathrm{DM},0} + \zeta_{\mathrm{DM}}(z - 0.3) + \beta_{\mathrm{DM}}(\log{\msalpi} - 11.5) + \xi_{\mathrm{DM}}(\log{\sigmaeei} - 2.4).
+\mu_{\mathrm{DM}}(\msalpi, \sigmaeei) = \mu_{\mathrm{DM},0} + \zeta_{\mathrm{DM}}(z_i - 0.3) + \beta_{\mathrm{DM}}(\log{\msalpi} - 11.5) + \xi_{\mathrm{DM}}(\log{\sigmaeei} - 2.4).
 \end{equation}
 %
 \begin{equation}
@@ -542,28 +1086,46 @@ where
 \end{equation}
 where
 \begin{equation}
-\mu_{\mathrm{IMF}}(\msalpi, \sigmaeei) = a_z(z - 0.3) + a_*(\log{\msalpi} - 11.5) + a_\sigma(\log{\sigmaeei} - 2.4) + \log{\alpha_{\mathrm{IMF},0}}.
+\mu_{\mathrm{IMF}}(\msalpi, \sigmaeei) = a_z(z_i - 0.3) + a_*(\log{\msalpi} - 11.5) + a_\sigma(\log{\sigmaeei} - 2.4) + \log{\alpha_{\mathrm{IMF},0}}.
 \end{equation}
-Since the lenses in the S15 study are collected from two different surveys, SLACS and SL2S, we allow for different values in the mean and dispersion of the stellar mass distribution in \Eref{eq:mstarterm}.
+Since the lenses in the S15 study are collected from two different
+surveys, SLACS and SL2S, we allow for different values in the mean and
+dispersion of the stellar mass distribution in \Eref{eq:mstarterm}: $\mu_*^{\mathrm{SLACS}}$, $\mu_*^{\mathrm{SL2S}}$, $\sigma_*^{\mathrm{SLACS}}$ and $\sigma_*^{\mathrm{SL2S}}$.
 
-The data consists of a measurement of the Einstein radius, velocity dispersion and stellar mass from stellar population synthesys analysis.
-From Bayes theorem, the posterior probability distribution of the hyperparameters $\hyperp$ given the data $\datad$ is
+In summary the distribution of the parameters describing individual galaxies, \Eref{eq:hyperp}, is described by 18 hyper-parameters:
+\begin{equation}
+\hyperp = \left\{\mu_*^{\mathrm{SLACS}}, \mu_*^{\mathrm{SL2S}}, \sigma_*^{\mathrm{SLACS}}, \sigma_*^{\mathrm{SL2S}}, \mu_{\sigma,0}, \zeta_\sigma, \beta_\sigma, \sigma_\sigma, \mu_{\mathrm{DM}, 0}, \zeta_{\mathrm{DM}}, \beta_{\mathrm{DM}}, \xi_{\mathrm{DM}}, \sigma_{\mathrm{DM}}, \log{\alpha_{\mathrm{IMF}, 0}}, a_z, a_*, a_\sigma, \sigma_{\mathrm{IMF}} \right\}.
+\end{equation}
+We wish to infer the posterior probability distribution of these hyper-parameters given the data $\datad$.
+The data consists of a measurement of the Einstein radius, velocity dispersion and stellar mass from stellar population synthesys analysis for each object.
+From Bayes theorem, 
 \begin{equation}
 \pr(\hyperp|\datad) \propto \pr(\hyperp)\pr(\datad|\hyperp),
 \end{equation}
-where $\pr(\hyperp)$ is the prior on the hyperparameters and $\pr(\datad|\hyperp)$ the likelihood of observing the data given the values of the hyperparameters.
+where $\pr(\hyperp)$ is the prior on the hyper-parameters and $\pr(\datad|\hyperp)$ the likelihood of observing the data given the values of the hyper-parameters.
 This latter term is the product over all galaxies
 \begin{equation}
 \pr(\datad|\hyperp) = \prod_i \pr(\datadi|\hyperp).
 \end{equation}
 Each term in this product can in turn be expanded as
 \begin{equation}\label{eq:integrals}
-\pr(\datadi|\hyperp) = \int d\msalpi d\aimfi d\mdmi \pr(\datadi|\msalpi,\aimfi,\mdmi) \pr(\msalpi,\aimfi,\mdmi|\hyperp).
+\pr(\datadi|\hyperp) = \int d\indpari \pr(\datadi|\indpari) \pr(\indpari|\hyperp).
 \end{equation}
-We assume flat priors on all hyperparameters.
+We assume flat priors on all hyper-parameters.
 We then sample the posterior probability distribution with a Markov Chain Monte Carlo. 
 The integrals in \Eref{eq:integrals} are evaulated via importance sampling and Monte Carlo integration following \citet{Sch++15}.
-The inferred values of the hyperparameters with $1-\sigma$ uncertainties are reported in \Tref{tab:hyperp}.
+The inferred values of the hyper-parameters with $1-\sigma$ uncertainties are reported in \Tref{tab:hyperp}.
+\begin{table*}
+ \caption{Median and $68\%$ limits on the posterior probability function of each hyper-parameter, marginalized over the other parameters.}
+ \label{tab:hyperp}
+ \begin{tabular}{lcl}
+ \hline
+ & & Parameter description \\
+ \hline
+ \input{table2.tex}
+ \hline
+ \end{tabular}
+\end{table*}
 
 \end{document}
 
