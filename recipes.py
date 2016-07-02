@@ -105,18 +105,19 @@ def limf_func_rhoc(z_form, coeff=(0.3, 1.0)):
 
 
 def limf_func_mstar(lmstar, coeff=(0., 0.5)):
-    return coeff[0] + coeff[1]*(lmstar - 11.)
-
+    return coeff[0] + coeff[1]*(lmstar - 11.5)
 
 def limf_func_vdisp(lvdisp, coeff=(0., 1.2)):
     return coeff[0] + coeff[1]*(lvdisp - 2.3)
 
+def limf_func_mstarvdisp(lmstar, lvdisp, coeff=(0., 0.2, 0.5)):
+    return coeff[0] + coeff[1]*(lmstar - 11.5) + coeff[2]*(lvdisp - 2.4)
 
 def limf_func_mhalo(lmhalo, coeff=(0.3, 0.0)):
-    return coeff[0] + coeff[1]*(lmhalo - 12.)
+    return coeff[0] + coeff[1]*(lmhalo - 13.)
 
 
-def satellite_imf(lmstar, z=2., recipe='SigmaSF', coeff=(0.1, 0.3), lmhalo=None):
+def satellite_imf(lmstar, lvdisp=None, z=2., recipe='mstar-vdisp', coeff=(0.2, 0.2, 0.5), lmhalo=None):
 
     if recipe == 'SigmaSF':
         dt_form = dt_form_mstar_func(lmstar)
@@ -131,11 +132,10 @@ def satellite_imf(lmstar, z=2., recipe='SigmaSF', coeff=(0.1, 0.3), lmhalo=None)
         return 10.**(limf_func_mstar(lmstar, coeff))
 
     elif recipe == 'vdisp':
-        return 10.**(limf_func_vdisp(np.log10(vdisp_mstar_rel_mason(lmstar, z)), coeff))
+        return 10.**(limf_func_vdisp(lvdisp, coeff))
 
     elif recipe == 'mstar-vdisp':
-        return 10.**(limf_func_mstar(lmstar, (coeff[0], coeff[1])) + \
-                     limf_func_vdisp(np.log10(vdisp_mstar_rel_mason(lmstar, z)), (coeff[2], coeff[3])))
+        return 10.**(limf_func_mstarvdisp(lmstar, lvdisp, coeff))
 
     elif recipe == 'mhalo':
         return 10.**(limf_func_mhalo(lmhalo, coeff))
