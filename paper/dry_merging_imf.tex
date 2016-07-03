@@ -92,7 +92,7 @@ assessed.  The correlation of $\aimf$ with stellar mass becomes
 find that dry mergers can mix the dependence of the IMF on stellar
 mass and velocity dispersion, making it challenging to infer,
   from $z=0$ observations of global galactic properties, what is the
-  quantity that originally determines the IMF.
+  quantity that is originally coupled with the IMF.
 \end{abstract}
 
 \begin{keywords}
@@ -182,7 +182,7 @@ observationally measuring stellar masses.  We then consider the {\em
 \aimf = \frac{\mtrue}{\msalp}.
 \end{equation}
 Stellar populations with a more bottom-light IMF than a Salpeter IMF
-will have $\alpha<1$. A Chabrier IMF for example corresponds typically
+will have $\aimf<1$. A Chabrier IMF for example corresponds typically
 to a value $\aimf\approx0.6$.  As defined above, $\aimf$ is a
 well-defined quantity also for galaxies that do not have a homogeneous
 stellar population, for example as a result of mergers.  For typical
@@ -192,10 +192,10 @@ masses, which dominate the mass budget but contribute little to
 low-mass cutoff, and/or shape of the IMF. In
   extreme cases, $\aimf$ can be affected by the IMF at high masses,
   which, however, leaves an imprint not only on the mass-to-light
-  ratio, but also in other phenomena, such as metal enrichment or
+  ratio, but also on other phenomena, such as metal enrichment or
   supernovae rates. In this work, $\aimf$ is the only parameter used
 to describe the IMF of a galaxy. Throughout our analysis we identify
-the terms {\em effective IMF} and IMF normalization with this quantity.
+the terms {\em effective IMF} and {\em IMF normalization} with this quantity.
 %{\bf The terms {\em IMF normalization}, {\em IMF mismatch} and {\em effective IMF} are used interchangeably.}
 
 In addition to the stellar mass of a galaxy, we track its halo
@@ -207,7 +207,7 @@ In addition to the stellar mass of a galaxy, we track its halo
 
 We generate a sample of 10000 halos at $z=2$ with masses drawn from the
   halo mass function described by \citet{Tin++08}, using an upper cut
-  off at $\log{\mhalo}M_\odot < 13.5$.  We make this cut to focus on
+  off at $\log{\mhalo/M_\odot} < 13.5$.  We make this cut to focus on
 the regime of galaxy or galaxy group scale halos, where most
 observational constraints on the IMF are measured \citep{Gav++07},
 excluding cluster of galaxy environments \citep[though IMF constraints
@@ -224,7 +224,7 @@ Therefore we otain an SHMR in terms of $\msalp$ by applying the transformation
 to the \citet{Lea++12} SHMR.
 
 We make an additional cut in stellar mass keeping only
-galaxies with $\log{\msalp} > 10.5$ and then select a random sample of
+galaxies with $\log{\msalp/M_\odot} > 10.5$ and then select a random sample of
 100 objects.  Finally we assign central stellar velocity dispersions
 $\sigma$ assuming a power-law scaling with stellar mass,
 \begin{equation}\label{eq:mason}
@@ -408,7 +408,7 @@ $a_*$, $a_\sigma$, $\alpha_{\mathrm{IMF},0}$ and $s$ using a similar
 hierarchical Bayesian inference method as the one used by S15.
 Details of the fitting procedure are given in the Appendix.  The main
 assumptions of this model are: a fixed Navarro Frenk and White
-\citep{NFW97} shape for the dark-matter distribution, a de Vaucouleurs \citep{deV48} profile with spatially constant
+\citep[][NFW]{NFW97} shape for the dark-matter distribution, a de Vaucouleurs \citep{deV48} profile with spatially constant
 mass to-light-ratio and isotropic velocity distribution
 for the stars.  
 
@@ -420,7 +420,9 @@ In \Fref{fig:sl2scorner} we plot the posterior probability distribution for the 
    the efective IMF of early-type galaxies, measured by fitting
    lensing and stellar kinematics observations of the S15 sample
    (\Fref{eq:sl2sfit}). Different levels represent the 68\%, 95\% and
-   99.7\% enclosed probability regions.}
+   99.7\% enclosed probability regions.
+The red dot marks the values $a_*=0$ and $a_\sigma=0$, corresponding to a Universal IMF.
+}
  \label{fig:sl2scorner}
 \end{figure*}
 %
@@ -436,6 +438,17 @@ assumptions specified above and discussed in
 Appendix~\ref{sect:appendix}, exclude a Universal IMF at the
 $3-\sigma$ level and show a trend of increasing IMF normalization with
 increasing mass and/or velocity dispersion.
+
+Given that 1) our inference on the parameter $a_*$ is consistent with zero, 2) a description of the galaxy population in which the IMF depends simultaneously on velocity dispersion and stellar mass is of not trivial interpretation and 3) a large number of works in the literature focus on trends of the IMF with velocity dispersion alone, we repeat the analysis by fixing $a_*=0$. The posterior probability distribution on the other model parameters describing the IMF is plotted in \Fref{fig:sigmaonlycorner}. 
+%
+\begin{figure*}
+ \includegraphics[width=\textwidth]{imf_pars_nfw_sigma_only.eps}
+ \caption{
+Same as \Fref{fig:sl2scorner}, but obtained by fixing $a_*=0$.
+}
+ \label{fig:sl2scorner}
+\end{figure*}
+%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -470,7 +483,7 @@ Best-fit curves are overplotted in \Fref{fig:snap} and values of the parameters 
    ``$\sigma$ model'' ({\em bottom panels}) IMF recipes, at $z=2$,
    $z=1$ and $z=0.3$.  {\em Solid lines:} Evolutionary tracks between
    $z=2$ and $z=0.3$ of a few representative galaxies.  {\em Dashed
-     lines:} fit of \Eref{eq:mstarmodel} and \Eref{eq:sigmamodel} to the data in each redshift snapshot. {\em
+     lines:} fits of \Eref{eq:mstarmodel} and \Eref{eq:sigmamodel} to the data in each redshift snapshot. {\em
      Shaded regions:} Observational constraints from \Sref{sect:obs},
    obtained using data from S15 at $z=0.3$.   }
  \label{fig:snap}
@@ -590,12 +603,7 @@ dispersion dependece of the IMF, the red dot corresponding to the
 ``$\sigma$ model'' in \Fref{fig:tracks} approaching the corresponding
 dot of the ``$M_*$ model''.
 
- 
-
-%At $z=0.3$ the coefficients describing the $\sigma$ model are very close to the $z=2$ values. The initial dependence of the IMF on velocity dispersion becomes slightly weaker while no significant dependence on stellar mass (at fixed velocity dispersion) is introduced. This is a result of dry mergers preserving the tight correlation between $\sigma$ and IMF apparent in the bottom right panel of \Fref{fig:snap}.
-%By contrast for the ``$M_*$ model'' the initial dependence on stellar mass is in part converted into a dependence on velocity dispersion as a result of dry mergers.
-
-\subsection{Predicted redshift evolution of the average IMF normalization and comparison with observations}
+\subsection{Average IMF normalization as a function of redshift}
 
 
 Finally we examine how the IMF normalization at fixed $\msalp$ and
@@ -666,8 +674,6 @@ velocity dispersion of the \citet{S+C14} sample is $\sim
 density profile follows the light distribution, neglecting the
 contribution of dark matter.
 
-%We use the reported values of the best-fit IMF normalization and velocity dispersion to fit for a $\sigma-
-
 Although \citet{S+C14} report values of the IMF normalization and
 velocity dispersion for each object, we cannot use this information
 directly to fit for a trend between $\aimf$ and $\sigma$ because in
@@ -677,7 +683,7 @@ correlated with that on the IMF.  An accurate fit of
 $\aimf$ versus $\sigma$ would then require a full knowledge of the
 measurement uncertainty in the $\sigma-\aimf$ plane, which, unlike for the S15 sample, is not
 available.  We then fix the slope of the $\sigma-\aimf$ relation to
-the value measured at low-$z$ by \citet{Spi++14} and fit for the
+the value of $a_\sigma$ measured in the analysis of the S15 data and fit for the
 normalization of the IMF at $\log{\sigma}=2.4$ in the \citet{S+C14}
 sample.  The resulting value of $\aimf$ is consistent with the ``$M_*$
 model'' and in slight tension with the ``$\sigma$ model'', though this
@@ -727,11 +733,8 @@ could simply be due to intrinsic scatter in the distribution of IMF in
 the population of galaxies.  Although in \Sref{sect:obs} we
 constrained the intrinsic scatter to be below $0.08$ in $\log{\aimf}$,
 there are indications that the scatter in IMF might be larger 
-\citep{S+L13}. Nevertheless, most of the
-median values of the individual estimates of $\aimf$ (indicated by the
-tip of the arrows in \Fref{fig:bevol}) lie below both models,
-suggesting a systematic bias between models and data.  Possible causes
-for this discrepancy are discussed in the next Section.
+\citep{S+L13}. 
+Other possible causes for the discrepancy between models and observations are discussed in the next section.
 %
 \begin{figure*}
  \includegraphics[width=\textwidth]{timeevol.eps}
@@ -762,10 +765,10 @@ for this discrepancy are discussed in the next Section.
 \subsection{Comparison of models with observations}
 
 Our model predicts that the effective IMF $\aimf$ of massive
-  early-type galaxies should tend to increase, on average, with
+  early-type galaxies, at fixed stellar mass and velocity dispersion, should tend to increase, on average, with
   redshift or remain constant. However, such a trend is not apparent
   from the few observational constraints on the IMF available at
-  $z>0.3$: some data suggest that $\aimf$ might be lower at higher
+  $z>0.3$: in fact, some data suggest that $\aimf$ might be lower at higher
   $z$ \citep[see also][]{Tor++14}. The first set of measurements we consider is the S15 sample,
 which we used to calibrate our model at redshift $z=0.3$. The S15 data
 favors an IMF that decreases with increasing redshift, at fixed
@@ -875,9 +878,9 @@ and initial stellar mass and accreted stellar mass.
 \begin{figure*}
  \includegraphics[width=\textwidth]{cornerplot.eps}
  \caption{ 
-   Distribution in stellar mass and halo mass at $z=2$, fracional
-   variation in stellar mass between $z=0$ and $z=2$, and stellar
-   mass-weighted merger mass ratio, as defined in \Eref{eq:xieff}.
+   Distribution in stellar mass $\msalp$ and halo mass $\mhalo$ at $z=2$, fracional
+   variation in stellar mass $\Delta\msalp$ and effective IMF $\Delta\log{\aimf}$ between $z=0$ and $z=2$, and stellar
+   mass-weighted merger mass ratio $\left<\xi\right>_*$, as defined in \Eref{eq:xieff}.
    {\em Purple dots}: ``$M_*$ model''. {\em Green dots}: ``$\sigma$
    model''.  }
  \label{fig:cornerplot}
@@ -908,7 +911,12 @@ between $z=2$ and $z=0$ of the mass ratio between the accreted
 satellites and the central halo weighted by the accreted stellar mass
 with each merger:
 \begin{equation}\label{eq:xieff}
-\left< \xi \right>_* = \frac{\int dz \int d\xi \xi \frac{\mathrm{d}^2N_{\mathrm{merg}}}{\mathrm{d}z \mathrm{d}\xi} \mathcal{R}_{*,h}(\xi \mhalo, z)\xi\mhalo}{\int dz \int d\xi  \frac{\mathrm{d}^2N_{\mathrm{merg}}}{\mathrm{d}z \mathrm{d}\xi} \mathcal{R}_{*,h}(\xi \mhalo, z)\xi\mhalo}.
+\left< \xi \right>_* = \frac{\int dz \int d\xi \xi f(\xi, z)}{\int dz \int d\xi f(\xi, z)},
+%\left< \xi \right>_* = \frac{\int dz \int d\xi \xi \frac{\mathrm{d}^2N_{\mathrm{merg}}}{\mathrm{d}z \mathrm{d}\xi} \mathcal{R}_{*,h}(\xi \mhalo, z)\xi\mhalo}{\int dz \int d\xi  \frac{\mathrm{d}^2N_{\mathrm{merg}}}{\mathrm{d}z \mathrm{d}\xi} \mathcal{R}_{*,h}(\xi \mhalo, z)\xi\mhalo}.
+\end{equation}
+with
+\begin{equation}
+f(\xi, x) \equiv \frac{\mathrm{d}^2N_{\mathrm{merg}}}{\mathrm{d}z \mathrm{d}\xi} \mathcal{R}_{*,h}(\xi \mhalo, z)\xi\mhalo.
 \end{equation}
 $\left< \xi \right>_*$ is plotted in \Fref{fig:cornerplot}. We see that $\left< \xi \right>_*$ increases for decreasing halo and stellar mass.
 This means that for the most massive galaxies the bulk of the accreted stellar mass is brought in through mergers of relatively small mass ratio, while for less massive galaxies major mergers play a more important role.
@@ -1005,6 +1013,11 @@ measurements.
 
 
 \section*{acknowledgments}
+
+CN acknowledges financial support from PRIN MIUR 2010-2011,
+project ‘The Chemical and Dynamical Evolution of the MilkyWay
+and Local Group Galaxies’, prot. 2010LY5N2T.
+
 %-------------------------------------------------------------------------------
 
 %\acknowledgments
@@ -1062,11 +1075,11 @@ We model this distribution as the product of four terms:
 where each term is a log-normal distribution respectively in $\msalp$, $\sigmaee$ (which is a well-defined function of $\indpar$), $\mdm$ and $\aimf$.
 More precisely,
 \begin{equation}\label{eq:mstarterm}
-\mathcal{G}_*(\msalpi|\hyperp) = \frac{1}{\sqrt{2\pi}}{\sigma_*}\exp{\left\{-\frac{(\log{\msalpi} - \mu_*)^2}{2\sigma_*^2}\right\}}.
+\mathcal{G}_*(\msalpi|\hyperp) = \frac{1}{\sqrt{2\pi}\sigma_*}\exp{\left\{-\frac{(\log{\msalpi} - \mu_*)^2}{2\sigma_*^2}\right\}}.
 \end{equation}
 %
 \begin{equation}
-\mathcal{G}_*(\sigmaeei|\hyperp) = \frac{1}{\sqrt{2\pi}}{\sigma_\sigma}\exp{\left\{-\frac{(\log{\sigmaeei} - \mu_\sigma(z_i, \msalpi))^2}{2\sigma_\sigma^2}\right\}},
+\mathcal{G}_*(\sigmaeei|\hyperp) = \frac{1}{\sqrt{2\pi}\sigma_\sigma}\exp{\left\{-\frac{(\log{\sigmaeei} - \mu_\sigma(z_i, \msalpi))^2}{2\sigma_\sigma^2}\right\}},
 \end{equation}
 where
 \begin{equation}
@@ -1074,7 +1087,7 @@ where
 \end{equation}
 %
 \begin{equation}
-\mathcal{G}_*(\mdmi|\hyperp) = \frac{1}{\sqrt{2\pi}}{\sigma_{\mathrm{DM}}}\exp{\left\{-\frac{(\log{\mdmi} - \mu_{\mathrm{DM}}(z_i, \msalpi, \sigmaeei))^2}{2\sigma_{\mathrm{DM}}^2}\right\}},
+\mathcal{G}_*(\mdmi|\hyperp) = \frac{1}{\sqrt{2\pi}\sigma_{\mathrm{DM}}}\exp{\left\{-\frac{(\log{\mdmi} - \mu_{\mathrm{DM}}(z_i, \msalpi, \sigmaeei))^2}{2\sigma_{\mathrm{DM}}^2}\right\}},
 \end{equation}
 where
 \begin{equation}
@@ -1082,7 +1095,7 @@ where
 \end{equation}
 %
 \begin{equation}
-\mathcal{G}_*(\aimfi|\hyperp) = \frac{1}{\sqrt{2\pi}}{\sigma_{\mathrm{IMF}}}\exp{\left\{-\frac{(\log{\aimfi} - \mu_{\mathrm{IMF}}(z, \msalpi, \sigmaeei))^2}{2\sigma_{\mathrm{IMF}}^2}\right\}},
+\mathcal{G}_*(\aimfi|\hyperp) = \frac{1}{\sqrt{2\pi}\sigma_{\mathrm{IMF}}}\exp{\left\{-\frac{(\log{\aimfi} - \mu_{\mathrm{IMF}}(z, \msalpi, \sigmaeei))^2}{2\sigma_{\mathrm{IMF}}^2}\right\}},
 \end{equation}
 where
 \begin{equation}
@@ -1097,7 +1110,7 @@ In summary the distribution of the parameters describing individual galaxies, \E
 \hyperp = \left\{\mu_*^{\mathrm{SLACS}}, \mu_*^{\mathrm{SL2S}}, \sigma_*^{\mathrm{SLACS}}, \sigma_*^{\mathrm{SL2S}}, \mu_{\sigma,0}, \zeta_\sigma, \beta_\sigma, \sigma_\sigma, \mu_{\mathrm{DM}, 0}, \zeta_{\mathrm{DM}}, \beta_{\mathrm{DM}}, \xi_{\mathrm{DM}}, \sigma_{\mathrm{DM}}, \log{\alpha_{\mathrm{IMF}, 0}}, a_z, a_*, a_\sigma, \sigma_{\mathrm{IMF}} \right\}.
 \end{equation}
 We wish to infer the posterior probability distribution of these hyper-parameters given the data $\datad$.
-The data consists of a measurement of the Einstein radius, velocity dispersion and stellar mass from stellar population synthesys analysis for each object.
+The data consists of a measurement of the Einstein radius, velocity dispersion and stellar mass from stellar population synthesis analysis for each object.
 From Bayes theorem, 
 \begin{equation}
 \pr(\hyperp|\datad) \propto \pr(\hyperp)\pr(\datad|\hyperp),
