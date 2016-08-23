@@ -3,6 +3,8 @@ import numpy as np
 import pylab
 import do_measurements as dm
 from plotters import probcontour
+from matplotlib import rc
+rc('text', usetex=True)
 
 snaps = [199, 100, 30]
 markers = ['s', '^', 'o']

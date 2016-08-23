@@ -3,6 +3,8 @@ import numpy as np
 import pylab
 import do_measurements as dm
 from plotters import rgb_alpha
+from matplotlib import rc
+rc('text', usetex=True)
 
 bandcolor = rgb_alpha((0,255,255), 1.)
 
@@ -120,7 +122,7 @@ for i in range(nsnap):
 for i in range(nsnap):
     mpar = mfitpars[i]
     vpar = vfitpars[i]
-    tablines.append("''$M_*$ model'' & (%3.2f, %3.2f, %3.2f) & (%3.2f, %3.2f, %3.2f)\\\\\n"%(mpar[1], mpar[0], mpar[2], vpar[1], vpar[0], vpar[2]))
+    tablines.append("''$M_*$ model (%s)'' & (%3.2f, %3.2f, %3.2f) & (%3.2f, %3.2f, %3.2f)\\\\\n"%(labels[i], mpar[1], mpar[0], mpar[2], vpar[1], vpar[0], vpar[2]))
 
 for gal in msgals:
     pylab.plot(np.log10(ms_pop.veldisp[gal, 30:]), np.log10(ms_pop.aimf[gal, 30:]), color='k')
@@ -128,7 +130,7 @@ for gal in msgals:
 pylab.xlim(xlimv[0], xlimv[1])
 pylab.ylim(ylim)
 
-pylab.xlabel('$\log{\sigma}$', fontsize=14)
+#pylab.xlabel('$\log{\sigma}$', fontsize=14)
 #pylab.ylabel('$\log{\\alpha_{\mathrm{IMF}}}$', fontsize=16)
 pylab.xticks(fontsize=14)
 #pylab.yticks(fontsize=16)
@@ -191,7 +193,7 @@ for i in range(0, nsnap):
 for i in range(nsnap):
     mpar = mfitpars[i]
     vpar = vfitpars[i]
-    tablines.append("''$\sigma$ model'' & (%3.2f, %3.2f, %3.2f) & (%3.2f, %3.2f, %3.2f)\\\\\n"%(mpar[1], mpar[0], mpar[2], vpar[1], vpar[0], vpar[2]))
+    tablines.append("''$\sigma$ model (%s)'' & (%3.2f, %3.2f, %3.2f) & (%3.2f, %3.2f, %3.2f)\\\\\n"%(labels[i], mpar[1], mpar[0], mpar[2], vpar[1], vpar[0], vpar[2]))
 
 f = open('table1.tex', 'w')
 f.writelines(tablines)

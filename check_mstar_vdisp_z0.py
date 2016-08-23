@@ -3,10 +3,12 @@ import pylab
 import numpy as np
 import recipes
 from plotters import rgb_alpha
+from matplotlib import rc
+rc('text', usetex=True)
 
 #f = open('pop_vdisp1.10_model.dat', 'r')
-f = open('pop_vdisp_constsigma_model.dat', 'r')
-#f = open('pop_vdisp_model.dat', 'r')
+#f = open('pop_vdisp_constsigma_model.dat', 'r')
+f = open('pop_vdisp_model.dat', 'r')
 pop = pickle.load(f)
 f.close()
 

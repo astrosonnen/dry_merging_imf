@@ -146,6 +146,19 @@ def fit_mstar_only(lmstar_sample, aimf_sample, guess=(0.3, 0.)):
 
     return par, scat
 
+def fit_mchab_dep(lmstar_sample, nani_sample, guess=(0.3, 0.)):
+
+    def modelfunc(p):
+        return p[0] + p[1]*(lmstar_sample - 11.)
+
+    def errfunc(p):
+        return modelfunc(p) - nani_sample
+
+    par, cov = leastsq(errfunc, guess)
+    scat = (sum(errfunc(par)**2)/float(len(nani_sample)))**0.5
+
+    return par, scat
+
 
 def fit_mhalo_only(lmhalo_sample, aimf_sample, guess=(0., 0.1)):
 

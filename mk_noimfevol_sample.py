@@ -1,6 +1,6 @@
 import numpy as np
 import shmrs
-import popevol
+import popevol_noimfevol
 import recipes
 import pickle
 
@@ -13,9 +13,8 @@ ximin = 0.03
 #imf_coeff = (0.21, 0.26, 0.)
 
 #modelname = 'vdisp_n1000'
-modelname = 'vdisp'
-#modelname = 'noimfevol'
-imf_coeff = (0.04, 0., 1.20)
+modelname = 'noimfevol'
+imf_coeff = (0.0, 0., 1.20)
 
 vdisp_coeff = (2.48, 0.20)
 
@@ -36,7 +35,7 @@ vdisp_sample = 10.**(vdisp_coeff[0] + vdisp_coeff[1]*(lmstar_sample - 11.) + np.
 
 aimf_z2_sample = 0.*lmstar_sample
 
-pop = popevol.population(z_0=z_0, nobj=Ngal, mstar_chab_0=10.**lmstar_sample, mhalo_0=10.**lmhalo_sample, \
+pop = popevol_noimfevol.population(z_0=z_0, nobj=Ngal, mstar_chab_0=10.**lmstar_sample, mhalo_0=10.**lmhalo_sample, \
                          veldisp_0=vdisp_sample)
 
 pop.evolve(z_low=0., imf_recipe='mstar-vdisp', imf_coeff=imf_coeff, vdisp_coeff=vdisp_coeff, ximin=ximin)

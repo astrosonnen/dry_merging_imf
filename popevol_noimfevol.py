@@ -108,8 +108,7 @@ class population:
 
                 def integrand(xi):
                     lmstar_here = np.log10(xi*self.mhalo[j, i]*rfunc(xi*self.mhalo[j, i]))
-                    thing = recipes.satellite_imf(lmstar_here + 0.25, z=self.z[i], recipe=imf_recipe, coeff=imf_coeff, \
-                                                  lvdisp=vdisp_coeff[0] + vdisp_coeff[1]*(lmstar_here - 11.))* \
+                    thing = self.aimf[j, -1]* \
                             rfunc(xi*self.mhalo[j, i])*10.**0.25*xi**(beta+1.)*np.exp((xi/xitilde)**gamma)
                     return thing
 
@@ -139,7 +138,8 @@ class population:
 
             vdisp_coeff = fit_vdisp_coeff
             self.vdisp_coeff[i, :] = vdisp_coeff
-            self.aimf[:, i] = self.mstar_true[:, i] / self.mstar_salp[:, i]
+            #self.aimf[:, i] = self.mstar_true[:, i] / self.mstar_salp[:, i]
+            self.aimf[:, i] = self.aimf[:, -1]
 
             if imf_recipe == 'mstar':
                 imf_coeff = do_measurements.fit_mstar_only(np.log10(self.mstar_salp[:, i]), np.log10(self.aimf[:, i]), \
